@@ -1,0 +1,274 @@
+﻿<?xml version="1.0"?>
+<application>
+	<Structure name="sysconfig" ServerNodeName="IOServer1" ServerDataPath="\\NB-VIDN-SCADA" SpillTimeout="30" SpillPower="49">
+		<Actuators name="mm420config" port="5" number="2" first="1"/>
+		<Storages name="storconfig" Number="40" timerInsert="5">
+			<tank name="tank1" number="34" levelEvaluate="0" autozam="1"/>
+			<tank name="tank2" number="35" levelEvaluate="0" autozam="1"/>
+			<tank name="tank3" number="36" levelEvaluate="0" autozam="1"/>
+			<tank name="tank4" number="37" levelEvaluate="0" autozam="1"/>
+			<tank name="tank5" number="38" levelEvaluate="0" autozam="1"/>
+			<tank name="tank6" number="1" levelEvaluate="0" autozam="1"/>
+			<tank name="tank7" number="2" levelEvaluate="0" autozam="1"/>
+			<tank name="tank8" number="3" levelEvaluate="0" autozam="1"/>
+			<tank name="tank9" number="4" levelEvaluate="0" autozam="1"/>
+			<tank name="tank10" number="5" levelEvaluate="0" autozam="1"/>
+			<tank name="tank11" number="6" levelEvaluate="0" autozam="1"/>
+			<tank name="tank12" number="7" levelEvaluate="0" autozam="1"/>
+			<tank name="tank13" number="8" levelEvaluate="0" autozam="1"/>
+			<tank name="tank14" number="9" levelEvaluate="0" autozam="1"/>
+			<tank name="tank15" number="10" levelEvaluate="0" autozam="1"/>
+			<tank name="tank16" number="11" levelEvaluate="0" autozam="1"/>
+			<tank name="tank17" number="12" levelEvaluate="0" autozam="1"/>
+			<tank name="tank18" number="13" levelEvaluate="0" autozam="1"/>
+			<tank name="tank19" number="14" levelEvaluate="0" autozam="1"/>
+			<tank name="tank20" number="15" levelEvaluate="0" autozam="1"/>
+			<tank name="tank21" number="16" levelEvaluate="0" autozam="1"/>
+			<tank name="tank22" number="17" levelEvaluate="0" autozam="1"/>
+			<tank name="tank23" number="18" levelEvaluate="0" autozam="1"/>
+			<tank name="tank24" number="19" levelEvaluate="0" autozam="1"/>
+			<tank name="tank25" number="20" levelEvaluate="0" autozam="1"/>
+			<tank name="tank26" number="21" levelEvaluate="0" autozam="1"/>
+			<tank name="tank27" number="22" levelEvaluate="0" autozam="1"/>
+			<tank name="tank28" number="23" levelEvaluate="0" autozam="1"/>
+			<tank name="tank29" number="24" levelEvaluate="0" autozam="1"/>
+			<tank name="tank30" number="25" levelEvaluate="0" autozam="1"/>
+			<tank name="tank31" number="26" levelEvaluate="0" autozam="1"/>
+			<tank name="tank32" number="27" levelEvaluate="0" autozam="1"/>
+			<tank name="tank33" number="28" levelEvaluate="0" autozam="1"/>
+			<tank name="tank34" number="29" levelEvaluate="0" autozam="1"/>
+			<tank name="tank35" number="30" levelEvaluate="0" autozam="1"/>
+			<tank name="tank36" number="31" levelEvaluate="0" autozam="1"/>
+			<tank name="tank37" number="32" levelEvaluate="0" autozam="1"/>
+			<tank name="tank38" number="33" levelEvaluate="0" autozam="1"/>
+			<tank name="tank39" number="39" levelEvaluate="0" autozam="1"/>
+			<tank name="tank40" number="40" levelEvaluate="0" autozam="1"/>
+		</Storages>
+		<ASNs name="asnconfig" Number="8">
+			<asn name="asn1"  number="211"/>
+			<asn name="asn2"  number="212"/>
+			<asn name="asn3"  number="213"/>
+			<asn name="asn4"  number="214"/>
+			<asn name="asn5"  number="215"/>
+			<asn name="asn6"  number="216"/>
+			<asn name="asn7"  number="217"/>
+			<asn name="asn8"  number="218"/>
+		</ASNs>
+		<TERMs name="termconfig" Number="8" ButtonStartLoading="0">
+			<term name="term1" number="1"/>
+			<term name="term2" number="2"/>
+			<term name="term3" number="3"/>
+			<term name="term4" number="4"/>
+			<term name="term5" number="5"/>
+			<term name="term3" number="6"/>
+			<term name="term4" number="7"/>
+			<term name="term5" number="8"/>
+		</TERMs>    
+		<Parameters name="fillsetup" addon="0" dozeoff="1" block_DensEvaluate="0" dozeMin="20"/>
+	</Structure>
+	
+	<SQL name="sqlconfig" simulation="0" dsn="nbvidnoe" user="master_vidn" fulllog="1">	  
+		<Select name="ASNINFO" ask="select distinct fd.id, pck_goods.get_gds_short(sg.gds_id) as name, (select FNC_ASU_STORNUM (st.NUM_STOR) from dual) as numstor from flowmeter_desc fd, flowmeter_out fo, storage_goods sg , storage st where fd.id = fo.meter_desc_id and fd.terr_cnt_id = PCK_ADM.FNC_HOME_ID and fo.stor_id = sg.stor_id and sg.is_main = 1 and fo.begin_date &amp;lt= sysdate and fo.sp_end_date &amp;gt sysdate and sg.date_start &amp;lt= sysdate and sg.sp_end_date &amp;gt sysdate and sg.STOR_ID = st.ID and fd.seqno = ':seqno' " numparams="1" param1=":seqno">
+		</Select>	
+		<Select name="WAYBILLNUMS" ask="select doc_number from doc_list_for_scada where meter_desc_id = :flowID1" numparams="1" param1=":flowID1">
+		</Select>    
+		<Select name="WAYBILLOFF" ask="select line_id, alarm_id, name, secno, volume, fact_volume, fact_weight, doc_number, str , ekto, mix_weight, mix_stor, id 
+		from section_list_for_scada WHERE meter_desc_id= :flowID" numparams="1" param1=":flowID" >
+		</Select>
+		<Select name="CARDOFF" ask="select meter_desc_id, line_id, alarm_id, NAME, secno, volume, fact_volume, fact_weight, doc_number, str , namepr, Ekto, mix_weight, mix_stor, ID, card_id, card_number from SECTION_LIST_FOR_SCADA where meter_desc_id = :flowID" numparams="1" param1=":flowID" >
+		</Select>
+		<Select name="CARDCHECK" ask="select fnc_is_driver_card(':cardSN') as flag from dual" numparams="1" param1=":cardSN"/> 
+		<Select name="TANKINFO" ask="SELECT s.num_stor, s.id, s.BASE_HEIGHT, s.DEAD_REST, pck_goods.get_gds_short(pck_inv.NMCL_STORAGE_DEFAULT_ID(s.id))as name, fs.id as SENSOR_ID FROM storage s, fixed_sensor fs WHERE pck_inv.FNC_STORAGE_STATUS(s.id) = 1 AND s.ent_ID = pck_adm.FNC_ENT_HOME_ID AND s.id = fs.storage_id and sysdate &amp;gt= fs.begin_date and sysdate &amp;lt fs.sp_end_date AND fs.asu_number = ':seqno'" numparams="1" param1=":seqno"/>
+		
+		<!--Получить объем в резервуаре-->
+		<Select name="VOLUMERETRIEVING" ask="SELECT fnc_storage_level_raw(':tankID', 100*:level) as volume from dual" numparams="2" param1=":tankID" param2=":level"/>
+		
+		<Select name="ITOGI" ask="select NVL(fd.seqno, 0) as ASN,NVL(wr.alarm_id, 0) as ALARM_ID,NVL(wr.out_volume, 0) as OUT_VOLUME,NVL(wr.out_weight, 0) as OUT_WEIGHT,NVL(wr.volume, 0) as DOZE,NVL(wr.fact_volume, 0) as FACT_VOLUME,NVL(wr.fact_weight, 0) as FACT_WEIGHT,NVL(wr.fact_dencity, 0) as FACT_DENSITY,NVL(wr.avg_temperature, 0) as AVG_TEMPERATURE,to_char(wr.begin_datetime, 'hh24:mi') as BEGINTIME,to_char(wr.end_datetime, 'hh24:mi') as ENDTIME,NVL(w.doc_number, '        ') as DOC_NO,NVL(FNC_AUTO_NUM (co.name), '           ') as AUTO_NUM,to_char(NVL(cv.secno, 0),'0') AS SEC_NO from out_wbill_raw wr, out_wbill_mo_os_i wi, flowmeter_desc fd ,out_wbill_mo_os w, car_volume cv, car_owner co where w.doc_id = wi.doc_id and wi.line_id = wr.line_id AND fd.id = wr.flow_desc_id and fd.id IN (:asnIDs) and wi.car_dull_sec_id = cv.id and cv.car_id = co.id  AND (':datetime' = to_char( wr.begin_datetime, 'dd.mm.yyyy')) order by wr.begin_datetime, ASN" numparams="2" param1=":asnIDs" param2=":datetime"/>
+		
+		<Select name="ITOGITank" ask="select NVL(sr.fixed_sensor_ID, 0) as sensorID, NVL(sr.storage_ID, 0) as tankID, NVL(sr.OPER_TYPE, 0) as operType, to_char(sr.begin_date, 'hh24:mi') as DateTime, NVL(sr.Fill_Up_Level, 0) as Lvl, NVL(sr.Water_Level, 0) as WLvl, NVL(sr.Dencity, 0) as Denc, NVL(sr.Temperature, 0) as Temp from sensor_reading sr where sr.fixed_sensor_id IN (:tankIDs) and (':datetime' = to_char( sr.begin_date, 'dd.mm.yyyy')) order by sr.begin_date" numparams="2" param1=":tankIDs" param2=":datetime"/>
+
+		<Select name="SUMITOGI" ask="select SUM(wr.fact_volume) as FACT_VOLUME, SUM(wr.fact_weight) as FACT_WEIGHT from out_wbill_raw wr, out_wbill_mo_os_i wi, flowmeter_desc fd ,out_wbill_mo_os w, car_volume cv, car_owner co where w.doc_id = wi.doc_id and wi.line_id = wr.line_id AND fd.id = wr.flow_desc_id and fd.id IN (:asnIDs) and wi.car_dull_sec_id = cv.id and cv.car_id = co.id  AND (':datetime' = to_char( wr.begin_datetime, 'dd.mm.yyyy')) order by wr.begin_datetime desc                                  " numparams="2" param1=":asnIDs" param2=":datetime"/>
+
+		<Select name="TANKLEVEL" ask="SELECT s.id, invp.fill_up_level, invp.TOTAL_VOLUME_IN_STORAGE FROM inventory inv, invent_pour invp, invent_storage invs, robj_desc ro_d, respons_object ro, storage s WHERE invp.doc_id = inv.doc_id AND invs.line_id=invp.master_id AND invs.doc_id=invp.doc_id AND invs.robj_id=ro_d.id AND ro_d.stor_id=s.id AND ro_d.robj_id=ro.id AND ro.is_our=1 AND ro_d.date_start &amp;lt= sysdate AND ro_d.sp_end_date &amp;gt sysdate AND s.ent_ID = pck_adm.FNC_ENT_HOME_ID AND s.num_stor = ':seqno' and  invp.fill_up_level &amp;lt&amp;gt 0 ORDER BY inv.DOC_DATE DESC        " numparams="1" param1=":seqno"/>
+	 
+		<!-- Рассчитать плотность в резервуаре -->
+		<Select name="DENSITYCALCULATION" ask="select pck_volume.dencity_20_x((select pck_volume.dencity_x_20(:dens1, :temp1) from dual), :temp2) as DENS from dual" numparams="3" param1=":dens1" param2=":temp1" param3=":temp2"/>    
+		
+		<!-- Работа с весами -->
+		<Select name="IDWAGON" ask="select pck_adm.FNC_SEQUENCE('weighting_raw','ID') as ID from dual"/>
+		
+		<Select name="RAILENTRYLIST" ask="select WAGON_NUMBER, DATE_TIME, GROSS_WEIGHT, TARE_WEIGHT from weighting_raw where FACT_TARE_WEIGHT = 0 and (DATE_TIME BETWEEN :datetime1 and :datetime2) order by DATE_TIME desc" numparams="2" param1=":datetime1" param2=":datetime2"/>
+		
+		<Select name="WAGONWASENTRY" ask="select WAGON_NUMBER, ID from weighting_raw WHERE WAGON_NUMBER=':number' and FACT_TARE_WEIGHT=0 and (DATE_TIME BETWEEN :datetime1 and :datetime2)" numparams="3" param1=":number" param2=":datetime1" param3=":datetime2"/>
+
+		<Select name="GETFACTTAREWEIGHT" ask="select FACT_TARE_WEIGHT from weighting_raw where WAGON_NUMBER=':number' AND FACT_TARE_WEIGHT &amp;lt&amp;gt 0 order by DATE_TIME desc" numparams="1" param1=":number"/>
+
+		<Select name="ITOGIRAIL" ask=" select WAGON_NUMBER, GROSS_WEIGHT, TARE_WEIGHT, FACT_TARE_WEIGHT, DATE_TIME, DATE_TIME_OUT from weighting_raw  where (':datetime' = to_char( DATE_TIME_OUT, 'dd.mm.yyyy')) order by DATE_TIME_OUT desc " numparams="1" param1=":datetime"/>    
+
+		<!-- Получение ID присадки -->
+		<Select name="IDPRISADKI" ask="select pck_adm.FNC_SEQUENCE('out_wbill_raw_mix','ID') as ID from dual"/>
+		<!--Select name="test insert" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE) VALUES (989000000000131, 511000000000262, 7, TO_DATE('2017-11-17 18:03:08', 'YYYY-MM-DD HH24:MI:SS'), 111.0, 0.764, 12.1)"/-->	
+		<Select name="test insert1" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000131, 511000000000262, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 111.1, :density, 11.1, ':density')"/>	
+		<Select name="test insert2" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000140, 511000000000270, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 222.2, :density, 12.2, ':datetime')"/>	
+	</SQL>
+  
+	<BindLists>
+		<BindList name="ASNINI">
+			<item name="asnID" column="ID"/>
+			<item name="asnFUEL" column="NAME"/>
+			<item name="asnSTORNO" column="NUMSTOR"/>
+		</BindList>    
+		<BindList name="TANKINI">
+			<item name="tankNUM" column="NUM_STOR"/>
+			<item name="tankID" column="ID"/>
+			<item name="tankHeight" column="BASE_HEIGHT"/>
+			<item name="tankDeadRest" column="DEAD_REST"/>
+			<item name="tankFUEL" column="NAME"/>
+			<item name="sensorID" column="SENSOR_ID"/>
+		</BindList>
+		<BindList name="UPDIN">
+			<item name="asnID" column="FLOW_DESC_ID"/>
+			<item name="FQ410" column="IN_VOLUME"/>
+			<item name="FQ310" column="IN_WEIGHT"/>
+			<item name="DI110" column="IN_DENCITY"/>
+			<item name="TI110" column="IN_TEMPERATURE"/>
+			<item name="DATETIME" column="BEGIN_DATETIME"/>
+		</BindList>
+		<BindList name="UPDOUT">
+			<item name="asnID" column="FLOW_DESC_ID"/>
+			<item name="alarmID" column="ALARM_ID"/>
+			<item name="FQ410" column="OUT_VOLUME"/>
+			<item name="FQ310" column="OUT_WEIGHT"/>
+			<item name="VOL" column="FACT_VOLUME"/>
+			<item name="MASS" column="FACT_WEIGHT"/>
+			<item name="DI110" column="OUT_DENCITY"/>
+			<item name="TI110" column="OUT_TEMPERATURE"/>
+			<item name="TI310" column="AVG_TEMPERATURE"/>
+			<item name="DATETIME" column="END_DATETIME"/>
+		</BindList>
+		<BindList name="NAKL_DZINI">
+			<item name="wsLineID" column="LINE_ID"/>
+			<item name="wsAlarmID" column="ALARM_ID"/>
+			<item name="wsCarNum" column="NAME"/>
+			<item name="wsSecNO" column="SECNO"/>
+			<item name="wsTaskVol" column="VOLUME"/>
+			<item name="wsFactVol" column="FACT_VOLUME"/>
+			<item name="wsFactMass" column="FACT_WEIGHT"/>
+			<item name="wsDocNo" column="DOC_NUMBER"/>
+			<item name="wsDoseLine" column="STR"/>
+			<item name="wsEKTO" column="EKTO"/>		
+			<item name="wsMix_Weight" column="mix_weight"/>
+			<item name="wsMix_Stor" column="mix_stor"/>	
+			<item name="wsID" column="ID"/>		
+		</BindList>    
+    <BindList name="CARD_DZINI">    
+			<item name="tmMETERDESC" column="METER_DESC_ID"/>
+			<item name="tmLineID" column="LINE_ID"/>
+			<item name="tmAlarmID" column="ALARM_ID"/>
+			<item name="tmCarNum" column="NAME"/>      		
+			<item name="tmSecNO" column="SECNO"/>
+			<item name="tmTaskVol" column="VOLUME"/>
+			<item name="tmFactVol" column="FACT_VOLUME"/>
+			<item name="tmFactMass" column="FACT_WEIGHT"/>
+			<item name="tmDocNo" column="DOC_NUMBER"/>	
+			<item name="tmDoseLine" column="STR"/>			
+			<item name="tmPRODUCT" column="namePR"/>
+			<item name="tmEKTO" column="EKTO"/>		
+			<item name="tmMix_Weight" column="mix_weight"/>
+			<item name="tmMix_Stor" column="mix_stor"/>	
+			<item name="tmID" column="ID"/>	
+			<item name="tmCardID" column="CARD_ID"/>
+			<item name="tmCardNO" column="CARD_NUMBER"/>
+		</BindList>
+    <BindList name="CARDCHECK">    
+			<item name="tmCardType" column="FLAG"/>
+		</BindList>
+		<BindList name="ITOGI">
+			<item name="mgASN" column="ASN"/>
+			<item name="mgBegin" column="BEGINTIME"/>
+			<item name="mgEnd" column="ENDTIME"/>
+			<item name="mgDocNo" column="DOC_NO"/>
+			<item name="mgAutoNum" column="AUTO_NUM"/>
+			<item name="mgSecNo" column="SEC_NO"/>
+			<item name="mgDoze" column="DOZE"/>      
+			<item name="mgFactVol" column="FACT_VOLUME"/>
+			<item name="mgFactWeight" column="FACT_WEIGHT"/>
+			<item name="mgOutVol" column="OUT_VOLUME"/>
+			<item name="mgOutWeight" column="OUT_WEIGHT"/>
+			<item name="mgFactDens" column="FACT_DENSITY"/>
+			<item name="mgAvgTemp" column="AVG_TEMPERATURE"/>      
+			<item name="mgAlarm" column="ALARM_ID"/>			
+		</BindList>
+		<BindList name="ITOGITank">
+			<item name="mgSensorID" column="SENSORID"/>
+			<item name="mgTankID" column="TANKID"/>
+			<item name="mgOperType" column="OPERTYPE"/>
+			<item name="mgDateTime" column="DATETIME"/>
+			<item name="mgLvl" column="LVL"/>
+			<item name="mgWLvl" column="WLVL"/>
+			<item name="mgDenc" column="DENC"/>      
+			<item name="mgTemp" column="TEMP"/>		
+		</BindList>
+		<BindList name="SUMITOGI">
+			<item name="mgFQ61" column="FACT_VOLUME"/>
+			<item name="mgFQ51" column="FACT_WEIGHT"/>
+		</BindList>
+		<BindList name="NAKL_NUM">
+			<item name="docNO" column="DOC_NUMBER"/>
+		</BindList>
+		<BindList name="TANKVOLUME">
+			<item name="tankVolume" column="VOLUME"/>
+		</BindList>
+		<BindList name="INSERT_SENSOR_READING">
+			<item name="sensorID" column="FIXED_SENSOR_ID"/>
+			<item name="tankID" column="STORAGE_ID"/>
+			<item name="operType" column="OPER_TYPE"/>
+			<item name="LI17" column="FILL_UP_LEVEL"/>
+			<item name="LI27" column="WATER_LEVEL"/>
+			<item name="DI27" column="DENCITY"/>
+			<item name="TI17" column="TEMPERATURE"/>
+		</BindList>    
+		<BindList name="ITOGIRAIL">
+			<item name="mgVagonN" column="WAGON_NUMBER"/>
+			<item name="mgGrossW" column="GROSS_WEIGHT"/>
+			<item name="mgTareW" column="TARE_WEIGHT"/>
+			<item name="mgFTareW" column="FACT_TARE_WEIGHT"/>
+			<item name="mgDateT" column="DATE_TIME"/>
+			<item name="mgDateTOut" column="DATE_TIME_OUT"/>
+		</BindList>
+		<BindList name="RAILENTRYLIST">
+			<item name="mgVagonN" column="WAGON_NUMBER"/>
+			<item name="mgDateT" column="DATE_TIME"/>
+			<item name="mgGrossW" column="GROSS_WEIGHT"/>
+			<item name="mgTareW" column="TARE_WEIGHT"/>
+		</BindList>    
+		<BindList name="BOX">
+			<item name="wWagon" column="WAGON_NUMBER"/>
+			<item name="wID" column="ID"/>
+		</BindList>
+		<BindList name="FACTTARE">
+			<item name="wTareWeight" column="FACT_TARE_WEIGHT"/>
+		</BindList>
+		<BindList name="INSERT_WEIGHT">
+			<item name="wWagon" column="WAGON_NUMBER"/>
+			<item name="wGrossWeight" column="GROSS_WEIGHT"/>
+			<item name="wTareWeight" column="TARE_WEIGHT"/>
+			<item name="tmtatusW" column="STATUS"/>
+			<item name="wTime" column="DATE_TIME"/>
+			<item name="wID" column="ID"/>
+		</BindList>
+    <BindList name="UPDATE_WEIGHT">			
+			<item name="wGrossWeight" column="FACT_TARE_WEIGHT"/>
+			<item name="wTime" column="DATE_TIME_OUT"/>
+		</BindList>
+		<BindList name="SEL_ID">
+			<item name="wID" column="ID"/>
+		</BindList>
+		<BindList name="DENSITY_CALCULATION">
+			<item name="DI27" column="DENS"/>
+		</BindList>
+		<BindList name="S_ID">
+			<item name="ID16" column="ID"/>
+    </BindList>    
+	</BindLists>
+</application>
