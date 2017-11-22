@@ -78,7 +78,7 @@
 		<Select name="CARDOFF" ask="select meter_desc_id, line_id, alarm_id, NAME, secno, volume, fact_volume, fact_weight, doc_number, str , namepr, Ekto, mix_weight, mix_stor, ID, card_id, card_number from SECTION_LIST_FOR_SCADA where meter_desc_id = :flowID" numparams="1" param1=":flowID" >
 		</Select>
 		<Select name="CARDCHECK" ask="select fnc_is_driver_card(':cardSN') as flag from dual" numparams="1" param1=":cardSN"/> 
-		<Select name="TANKINFO" ask="SELECT s.num_stor, s.id, s.BASE_HEIGHT, s.DEAD_REST, pck_goods.get_gds_short(pck_inv.NMCL_STORAGE_DEFAULT_ID(s.id))as name, fs.id as SENSOR_ID FROM storage s, fixed_sensor fs WHERE pck_inv.FNC_STORAGE_STATUS(s.id) = 1 AND s.ent_ID = pck_adm.FNC_ENT_HOME_ID AND s.id = fs.storage_id and sysdate &amp;gt= fs.begin_date and sysdate &amp;lt fs.sp_end_date AND fs.asu_number = ':seqno'" numparams="1" param1=":seqno"/>
+		<Select name="TANKINFO" ask="SELECT s.num_stor, s.id, s.BASE_HEIGHT, s.DEAD_REST, pck_goods.get_gds_short(pck_inv.NMCL_STORAGE_DEFAULT_ID(s.id))as name, fs.id as SENSOR_ID FROM storage s, fixed_sensor fs WHERE pck_inv.FNC_STORAGE_STATUS(s.id) = 1 AND s.id = fs.storage_id and sysdate &amp;gt= fs.begin_date and sysdate &amp;lt fs.sp_end_date AND fs.asu_number = ':seqno'" numparams="1" param1=":seqno"/>
 		
 		<!--Получить объем в резервуаре-->
 		<Select name="VOLUMERETRIEVING" ask="SELECT fnc_storage_level_raw(':tankID', 100*:level) as volume from dual" numparams="2" param1=":tankID" param2=":level"/>
@@ -108,7 +108,9 @@
 		<!-- Получение ID присадки -->
 		<Select name="IDPRISADKI" ask="select pck_adm.FNC_SEQUENCE('out_wbill_raw_mix','ID') as ID from dual"/>
 		<!--Select name="test insert" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE) VALUES (989000000000131, 511000000000262, 7, TO_DATE('2017-11-17 18:03:08', 'YYYY-MM-DD HH24:MI:SS'), 111.0, 0.764, 12.1)"/-->	
+		
 		<Select name="test insert1" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000131, 511000000000262, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 111.1, :density, 11.1, ':density')"/>	
+		
 		<Select name="test insert2" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000140, 511000000000270, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 222.2, :density, 12.2, ':datetime')"/>	
 	</SQL>
   

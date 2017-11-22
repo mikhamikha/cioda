@@ -18,7 +18,7 @@ namespace ciodans {
     /// </summary>
     /// <typeparam name="T1">Ключ</typeparam>
     /// <typeparam name="T2">Значение</typeparam>
-    public sealed class Pair<T1, T2> {
+    public sealed class Pair<T1, T2> : IEquatable<Pair<T1, T2>> {
         public T1 _tkey { get; set; }
         public T2 _tvalue { get; set; }
         public Pair(T1 t1, T2 t2) { _tkey = t1; _tvalue = t2; }
@@ -29,7 +29,7 @@ namespace ciodans {
         
         public override bool Equals(object obj) {
             if (obj == null) return false;
-            Pair<T1, T2> objAsPart = obj as Pair<T1, T2>;
+            var objAsPart = obj as Pair<T1, T2>;
             if (objAsPart == null) return false;
             else return Equals(objAsPart);
         }
@@ -60,10 +60,11 @@ namespace ciodans {
     /// <summary>
     /// Класс, реализующий ячейку хранения запроса с параметрами
     /// </summary>
-    public class statement {
-        public int _id;
-        public string _request;
+    public class statement : IEquatable<statement> {
+        public int _id { get; set; }
+        public string _request { get; set; }
         public PairList<string, string> _params = new PairList<string, string>();
+        public PairList<string, string> _binds = new PairList<string, string>();
 
         public void AddParam(string key, string value="''") {
             _params.Add(new Pair<string, string>(key, value));
@@ -84,6 +85,14 @@ namespace ciodans {
             return (this._id.Equals(other._id));
         }
     }
+    public class oraset
+    {
+        public OracleConnection m_con;
+        public OracleDataReader m_dr;
+        public oraset(OracleConnection oc) {
+            m_con = oc;
+        }
+    }
     /// <summary>
     /// Класс работы с БД Оракл через Oracle.DataAccess
     /// </summary>
@@ -93,9 +102,8 @@ namespace ciodans {
         private string m_pwd;
         private string m_path;
         private Serilog.Core.Logger m_log;
-        private XmlDocument m_cfg;
         private List<statement> m_ost = new List<statement>();  // список запросов к БД
-        private PairList<int, OracleConnection> m_con_list = new PairList<int,OracleConnection>();
+        private PairList<int, oraset> m_con_list = new PairList<int, oraset>();
         private static int m_con_id = 0;
         /*
 //        private List<KeyValuePair<int, statement>> m_ost = new List<KeyValuePair<int, statement>>();
@@ -104,23 +112,32 @@ namespace ciodans {
 //        const string _lowercase = "abcdefghijklmnopqrstuvwxyz";
         */
         /// <summary>
-        /// Загрузка конфигурационного файла
+        /// Чтение значения атрибута по заданному пути
         /// </summary>
-        ///<param name="path">Имя файла с полным путем</param> 
-        ///<returns>Код возврата (=0 - good, =-1 - не смогла загрузить файл)</returns>
-        public int initcfg(string path) {
-            int rc = -1;
-            if(path != "" && File.Exists(path)) {
-                try {
-                    if(m_cfg!=null) m_cfg = new XmlDocument();
-                    m_cfg.Load(path);
-//                m_cfg_ns = new XmlNamespaceManager(m_cfg.NameTable);
-//                m_cfg_ns.AddNamespace(
-                    rc=0;
+        /// <param name="xdoc">Имя файла с полным путем</param>
+        /// <param name="xpath">Путь до узла с требуемым атрибутом</param>
+        /// <example>xpath = "..//Select[@name="ASNINFO"]"</example>
+        /// <param name="xnameattr">Название считываемого атрибута</param>
+        /// <param name="attrvalue">Считанное значение атрибута</param>
+        /// <returns>Код возврата (=0 - good, =-1 - не смогла найти путь, =-2 - не смогла прочитать запрос)</returns>
+        public int cfgReadAttr(string xdoc, string xpath, string xnameattr, ref string attrvalue) {
+            int rc=-1;
+            try {
+                if (xdoc != "") {
+                    XmlDocument x = new XmlDocument();
+                    x.Load(xdoc);
+                    XmlNode xn = x.SelectSingleNode(xpath).Attributes.GetNamedItem(xnameattr);
+                    attrvalue = ((XmlAttribute)xn).Value;
+                    rc = 0;
                 }
-                catch(XmlException e) {
-                    log("Ошибка загрузки файла {F} - {N}: {D}", path, e.GetType().Name, e.Message);
-                }
+            }
+            catch (XmlException e) {
+                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                rc = -2;
+            }
+            catch (Exception e) {
+                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                rc = -2;
             }
             return rc;
         }
@@ -193,16 +210,15 @@ namespace ciodans {
             try {
 				if( dsn!="" && uid!="" && pwd!="" ) {
                     constr = constr.Replace("user", uid).Replace("pass", pwd).Replace("sid", dsn);
-                    OracleConnection oc = new OracleConnection(constr);
-                    oc.Open();
-
+                    var oc = new oraset(new OracleConnection(constr)); 
+                    oc.m_con.Open(); 
                     m_dsn = dsn; m_uid = uid; m_pwd = pwd;
                     rc = 0;
                     m_con_id++;
-                    m_con_list.Add(m_con_id, oc);
+                    m_con_list.Add( m_con_id, oc );
                     connectId = m_con_id;
-                    oexecute( m_con_id, "set role workspace identified by " + role );
-                    oexecute( m_con_id, "call prc_connect(" + prc + ")" );
+                    oexecute( m_con_id, "set role workspace identified by " + role, true );
+                    oexecute( m_con_id, "call prc_connect(" + prc + ")", true );
                     log("Соединение #{N} {UID}@{DSN} установлено", m_con_id, uid, dsn);
                 }
             }
@@ -219,7 +235,7 @@ namespace ciodans {
         {
 			try {
                 int _index = m_con_list.FindIndex(m => m._tkey == connectId);
-                OracleConnection oc = m_con_list[_index]._tvalue;
+                var oc = m_con_list[_index]._tvalue.m_con;
 
                 if (oc.State == ConnectionState.Open) {
                     oc.Close();
@@ -235,7 +251,8 @@ namespace ciodans {
         /// <summary>
         /// Установка запроса SQL для последующего заполнения параметрами и выполнения 
         /// </summary>
-        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле)</param>
+        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) <example>Ex.: xpath = "..//Select[@name="ASNINFO"]"</example></param>
+        /// <example>xpath = "..//Select[@name="ASNINFO"]"</example>
         /// <param name="stmtId">out - Идентификатор запроса</param>
         /// <param name="sXml">[Имя Xml-файла с полным путем]</param>
         /// <returns>Код возврата (=0 - good, =-1 и -2 - неудача)</returns>
@@ -243,33 +260,23 @@ namespace ciodans {
         public int osetstatement(string sRequest, ref int stmtId, string sXml = "")
         {
             int rc = -1;
-            string sask = sRequest;
+            string sask = "";
 
-            try {
-                if (sXml != "") {
-                    XmlDocument x = new XmlDocument();
-                    x.Load(sXml);
-                    XmlNode xn = x.SelectSingleNode(".//Select[@name=\"" + sask + "\"]").Attributes.GetNamedItem("ask");
-                    sask = ((XmlAttribute)xn).Value;
-                }
-            }
-            catch (XmlException e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", sask, sXml, e.GetType().Name, e.Message);
-                rc = -2;
-            }
-            catch (Exception e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", sask, sXml, e.GetType().Name, e.Message);
-                rc = -2;
-            }
-            if (rc != -2) {
+            if (sXml != "") rc = cfgReadAttr( sXml, sRequest, "ask", ref sask );
+
+            if ( rc == 0 ) {
                 try {
                     int _id = m_ost.Count==0? 1 : m_ost.Last()._id+1;
+                    sask = sask.Replace("&gt", ">");
+                    sask = sask.Replace("&amp;gt", ">");
+                    sask = sask.Replace("&lt", "<");
+                    sask = sask.Replace("&amp;lt", "<");
                     m_ost.Add(new statement(_id, sask));
-                    rc = 0;
                     stmtId = _id;
                 }
                 catch (Exception e) {
                     log("Ошибка записи запроса запроса {A} - {N}: {D}", sask, e.GetType().Name, e.Message);
+                    rc = -3;
                 }
             }
             return rc;
@@ -280,18 +287,60 @@ namespace ciodans {
         /// <param name="stmtId">Идентификатор запроса</param>
         /// <param name="name">Название параметра</param>
         /// <param name="value">Значение параметра</param>
-        /// <returns>Идентификатор был получен osetstatement</returns>
+        /// <returns>Код возврата (=0 - good, =-1 и -2 - неудача)</returns>
+        /// <remarks>Идентификатор был получен osetstatement</remarks>
         public int osetparameter(int stmtId, string name, string value) {
             int rc = -1;
-            try {
+            try
+            {
                 statement items = m_ost.First(m => m._id == stmtId);
-                string sval = value.Replace(",",".");
+                string sval = value.Replace(",", ".");
                 if (items._params.FindAll(n => n._tkey == name).Count == 0)
                     m_ost.First(m => m._id == stmtId)._params.Add(new Pair<string, string>(name, sval));
                 else m_ost.First(m => m._id == stmtId)._params.Find(n => n._tkey == name)._tvalue = sval;
+                rc = 0;
+            }
+            catch (InvalidOperationException e)
+            {
+                log("Ошибка записи значения {B} в параметр {A} запроса {F} - {N}: {D}", value, name, stmtId, e.GetType().Name, e.Message);
+                rc = -2;
+            }
+            catch (Exception e)
+            {
+                log("Ошибка записи значения {B} в параметр {A} запроса {F} - {N}: {D}", value, name, stmtId, e.GetType().Name, e.Message);
+                rc = -2;
+            }
+            return rc;
+        }
+        /// <summary>
+        /// Добавление бинд-листа к подготавливаемому запросу
+        /// </summary>
+        /// <param name="stmtId">Идентификатор запроса</param>
+        /// <param name="xpath">xpath-запрос до бинд-листа <example>Ex.: xpath = "..//BindList[@name="ASNINI"]"</example></param>
+        /// <param name="xdoc">Xml-файл с полным путем</param>
+        /// <returns>Код возврата (=0 - good, =-1 и -2 - неудача)</returns>
+        public int oaddbindlist(int stmtId, string xpath, string xdoc)
+        {
+            int rc = -1;
+            
+            try {
+                if (xdoc != "") {
+                    var x = new XmlDocument();
+                    x.Load(xdoc);
+                    var xn = x.SelectSingleNode(xpath);
+                    m_ost.First(m => m._id == stmtId)._binds.Clear();
+                    foreach(XmlNode it in xn.ChildNodes) {
+                        m_ost.First(m => m._id == stmtId)._binds.Add(
+                                                            new Pair<string,string> (
+                                                                it.Attributes.Item(0).Value,
+                                                                it.Attributes.Item(1).Value )
+                                                                );
+                    }
+                    if(xn.ChildNodes.Count > 0) rc = 0;
+                }
             }
             catch (Exception e) {
-                log("Ошибка записи значения {B} в параметр {A} запроса {F} - {N}: {D}", value, name, stmtId, e.GetType().Name, e.Message);
+                log("Ошибка привязки биндлиста {B} к запросу {A} - {N}: {D}", xpath, stmtId, e.GetType().Name, e.Message);
                 rc = -2;
             }
             return rc;
@@ -308,6 +357,7 @@ namespace ciodans {
             int rc = -1;
             try {
                 m_ost.Remove( new statement(stmtId, "") );
+                rc = 0;
             }
             catch (Exception e) {
                 log("Ошибка очистки запроса {F} - {N}: {D}", stmtId, e.GetType().Name, e.Message);
@@ -316,7 +366,7 @@ namespace ciodans {
             return rc;
         }
         /// <summary>
-        /// Выполнить запрос SQL
+        /// Выполнить подготовленный запрос SQL
         /// </summary>
         /// <param name="connectID">Идентификатор соединения</param>
         /// <param name="stmtId">Идентификатор запросa</param>
@@ -326,49 +376,40 @@ namespace ciodans {
         public int oexecute(int connectId, int stmtId, bool fLog = true)
         {
             int rc = -1;
-            statement _st = m_ost.First(m => m._id == stmtId);
-            string _ask = _st._request;
-            PairList<string, string> _params = _st._params;
-            foreach( Pair<string,string> m in _params) _ask = _ask.Replace(m._tkey, m._tvalue);
-            OracleConnection oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
-            oexecute(oc, _ask, fLog);
-            
+            try
+            {
+                statement _st = m_ost.First(m => m._id == stmtId);
+                string _ask = _st._request;
+                var _params = _st._params;
+                foreach (Pair<string, string> m in _params) _ask = _ask.Replace(m._tkey, m._tvalue);
+                //            var oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
+                rc = oexecute(connectId, _ask, _st._binds.Count == 0, fLog);
+            }
+            catch (Exception e)
+            {
+                log("Ошибка выполнения запроса '{A}' - {N}: {D}", stmtId, e.GetType().Name, e.Message);
+                rc = -3;
+            }            
             return rc;
         }
         /// <summary>
         /// Выполнить запрос SQL (предложение или из файла)
         /// </summary>
         /// <param name="connectID">Идентификатор соединения</param>
-        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле)</param>
+        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) <example>Ex.:.//Select[@name="readTanks"]</example></param>
         /// <param name="sXml">[Имя Xml-файла с полным путем]</param>
         /// <param name="fLog">[true - положить результат в лог]</param>
         /// <returns>Код возврата (=0 - good, =-1 - запрос не выполнен, =-2 - ошибка чтения XML)</returns>
-        /// <remarks>Для поиска запроса в Xml используется XPATH запрос вида .//Select[@name="readTanks"]</remarks>
         public int oexecute(int connectId, string sRequest = "", string sXml = "", bool fLog = true)
         {
             int rc = -1;
-            string _ask = sRequest;
+            string sask = sRequest;
+
+            if (sXml != "") rc = cfgReadAttr(sXml, sRequest, "ask", ref sask);
             
-            try {
-                if(sXml!="") { 
-                    XmlDocument x = new XmlDocument();
-                    x.Load(sXml);
-                    XmlNode xn = x.SelectSingleNode(".//Select[@name=\"" + _ask + "\"]").Attributes.GetNamedItem("ask");
-                    _ask = ((XmlAttribute)xn).Value;
-                }
-            }
-            catch (XmlException e) {
-                log("Ошибка чтения атрибута {A} из файла {F} - {N}: {D}", _ask, sXml, e.GetType().Name, e.Message);
-                rc = -2;
-            }
-            catch (Exception e) {
-                log("Ошибка чтения атрибута {A} из файла {F} - {N}: {D}", _ask, sXml, e.GetType().Name, e.Message);
-                rc = -2;
-            }  
-  
-            if(rc!=-2) {
-                OracleConnection oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
-                oexecute(oc, _ask, fLog);
+            if(rc==0) {
+                oraset oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
+                oexecute(connectId, sask, true, fLog);
             }
             return rc;
         }
@@ -379,30 +420,81 @@ namespace ciodans {
         /// <param name="ask">Запрос(или имя запроса в Xml-файле)</param>
         /// <param name="fLog">[true - положить результат в лог]</param>
         /// <returns>Код возврата (=0 - good, =-1 - запрос не выполнен, =-2 - ошибка чтения XML)</returns>
-        /// <remarks>Для поиска запроса в Xml используется XPATH запрос вида .//Select[@name="readTanks"]</remarks>
-        private int oexecute(OracleConnection oc, string ask, bool fLog = true)
+        private int oexecute(int connectId, string ask, bool fNoRec, bool fLog = true)
         {
             int rc = -1;
-            string _ask="";
+            string sask="";
             try {
-                if (oc.State == ConnectionState.Open) {
-                    _ask=ask;
-                    OracleCommand ocm = oc.CreateCommand();
+                var oc = m_con_list.First(m => m._tkey == connectId)._tvalue.m_con;
+                if(oc.State == ConnectionState.Open) {
+                    sask=ask;
+                    var ocm = oc.CreateCommand();
                     ocm.CommandText = ask;
-                    ocm.ExecuteNonQuery();
-                    ocm.Dispose();
+                    if (fNoRec) {
+                        ocm.ExecuteNonQuery();
+                        ocm.Dispose();
+                    }
+                    else {
+                        m_con_list.First(m => m._tkey == connectId)._tvalue.m_dr = ocm.ExecuteReader();
+                    }
                     string scont = "set role workspace";
-                    if (_ask.ToLower().Contains(scont)) _ask = scont;
-                    if (fLog) log("{A}", _ask);
+                    if (sask.ToLower().Contains(scont)) sask = scont;
+                    if (fLog) log("{A}", sask);
                     rc = 0;
                 }
             }
             catch (OracleException e) {
-                log("Ошибка выполнения команды '{A}' - {N}: {D}", _ask, e.GetType().Name, e.Message);
+                log("Ошибка выполнения команды '{A}' - {N}: {D}", ask, e.GetType().Name, e.Message);
                 rc = -3;
             }
             catch (Exception e) {
-                log("Ошибка выполнения команды '{A}' - {N}: {D}", _ask, e.GetType().Name, e.Message);
+                log("Ошибка выполнения команды '{A}' - {N}: {D}", ask, e.GetType().Name, e.Message);
+                rc = -3;
+            }
+            return rc;
+        }
+        /// <summary>
+        /// Получение данных из DataReader
+        /// </summary>
+        /// <param name="connectId">Идентификатор соединения</param>
+        /// <param name="numRec">Номер выбираемой записи</param>
+        /// <returns></returns>
+        public int ogetrecord(int connectId, int stmtId, int numRec) {
+            int rc = -1;
+            try {
+                var _reader = m_con_list.First(m => m._tkey == connectId)._tvalue.m_dr;
+                var _st = m_ost.First(m => m._id == stmtId);
+                while (_reader.Read()) {
+                    foreach (var col in _st._binds)
+                    {
+                        log("{VAR} | {COL} | {VALUE}", col._tkey, col._tvalue, _reader[col._tvalue]);
+                    }
+                }
+                rc=0;
+            }
+            catch (OracleException e)
+            {
+                log("Ошибка выборки записи '{A}' соединения {B} - {N}: {D}", numRec, connectId, e.GetType().Name, e.Message);
+                rc = -2;
+            }
+            catch (Exception e)
+            {
+                log("Ошибка выборки записи '{A}' соединения {B} - {N}: {D}", numRec, connectId, e.GetType().Name, e.Message);
+                rc = -2;
+            }
+
+            return rc;
+        }
+        public int oend(int connectId, int stmtId=0) {
+            int rc = -1;
+            try {            
+                m_con_list.First(m => m._tkey == connectId)._tvalue.m_dr.Close();
+                if (stmtId!=0) rc=oclrstatement(stmtId);
+                rc=0;
+            }
+            catch (Exception e)
+            {
+                log("Ошибка oend({A},{B}) - {N}: {D}", connectId, stmtId, e.GetType().Name, e.Message);
                 rc = -3;
             }
             return rc;
