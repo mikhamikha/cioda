@@ -15,12 +15,11 @@ namespace testapp
             cioda co = new cioda();
             co.initlog(@"F:\csharp\cioda\logs");
 //            co.initlog(@"D:\Work\projects\csharp\cioda\logs");
-        
+
             co.oconnect("orcl", "fox", "redfox", ref idcon1);
             co.oconnect("orcl", "fox", "redfox", ref idcon2);
 
             co.osetstatement(".//Select[@name=\"test insert1\"]", ref idstmt1, @"F:\csharp\cioda\logs\appcfg.xml");
-            co.osetparameter(idstmt1, ":datetime", _now);            
             co.osetparameter(idstmt1, ":density", _dens.ToString());
 
 
@@ -40,8 +39,8 @@ namespace testapp
             co.osetparameter(idstmt2, ":seqno2", "20");
             co.oaddbindlist(idstmt2, ".//BindList[@name=\"TANKINI\"]", @"F:\csharp\cioda\logs\appcfg.xml");
             co.oexecute(idcon2, idstmt2);
-            co.ogetrecord(idstmt2, 3, 3);
-            co.ogetrecord(idstmt2, 6, 4);
+            co.ogetrecord(idstmt2, 2, 3);
+            co.ogetrecord(idstmt2, 5, 4);
             co.oend(idcon2, idstmt2);
 
             co.oinsert(idcon2, ".//BindList[@name=\"INSERT_SENSOR_READING\"]", @"F:\csharp\cioda\logs\appcfg.xml", 3);

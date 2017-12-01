@@ -1,12 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cioda", "cioda\cioda.csproj", "{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testapp", "testapp\testapp.csproj", "{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A} = {FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptxml", "cryptxml\cryptxml.csproj", "{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,7 @@ Global
 		{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}.Release|x86.ActiveCfg = Release|Any CPU
+		{FBE46FA6-D4DB-4C7F-96BF-92FA34F2667A}.Release|x86.Build.0 = Release|Any CPU
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -39,6 +42,16 @@ Global
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Release|Mixed Platforms.Build.0 = Release|x86
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Release|x86.ActiveCfg = Release|x86
 		{5021BDAC-8901-4B27-A77C-BA613D0E2AEC}.Release|x86.Build.0 = Release|x86
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FE5345AE-EB2A-429F-8E3C-08D38C2A2417}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
