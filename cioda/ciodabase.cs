@@ -62,8 +62,9 @@ namespace ciodans {
             Add(new Pair<T1, T2>(key, value));
         }
     }
+
     /// <summary>
-    /// Класс, реализующий ячейку хранения запроса с параметрами
+    /// Класс, реализующий ячейку хранения запроса
     /// </summary>
     public class statement : IEquatable<statement> {
         public int _id { get; set; }
@@ -97,27 +98,29 @@ namespace ciodans {
             _binds.Clear();
         }
     }
+    /*
     public class oraset
     {
         public OracleConnection m_con;
-//        public OracleDataReader m_dr;
         public oraset(OracleConnection oc) {
             m_con = oc;
         }
     }
+    */
     /// <summary>
     /// Класс работы с БД Оракл через Oracle.DataAccess
     /// </summary>
     public class ciodabase {
         public string configFile { get; set; }
+        public string userRole { get; set; }
+        public string userPrc { get; set; }
         public string xpathAttr { get; set; }
-//        public string pwd { get; set; }
         public int fLog { get; set; }
         public int connectionId { get { return m_con_id; } }
         public int statementId { get { return m_stmt_id; } }
         private Serilog.Core.Logger m_log;
         private List<statement> m_ost = new List<statement>();  // список запросов к БД
-        private PairList<int, oraset> m_con_list = new PairList<int, oraset>();
+        private PairList<int, OracleConnection> m_con_list = new PairList<int, OracleConnection>();
         private static int m_con_id = 0;
         private static int m_stmt_id = 0;
         private string m_path;
@@ -134,11 +137,13 @@ namespace ciodans {
                 if (sp.LastIndexOf('\\') < sp.Length - 1) sp += @"\";
                 try {
                     sp = Path.GetDirectoryName(sp);
+                    /*
                     m_log = new LoggerConfiguration()
                         .MinimumLevel.Debug()
                         .WriteTo.LiterateConsole()
                         .WriteTo.RollingFile(sp + "\\{Date}.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
                         .CreateLogger();
+                    */ 
                     m_path = sp;
                     rc = (int)constants.err.s_ok;
                 }
@@ -162,15 +167,19 @@ namespace ciodans {
         /// <returns>Код возврата (=0 - good, =-1 - не смогла выполнить)</returns>
         public int log( bool type, string s, params object[] o ) {
             int rc = (int)constants.err.e_fault;
-            if (s.Length > 0) {
-                try {
-                    if(type) m_log.Information( s, o );
-                    else m_log.Error(s, o);
+            try {
+                using ( var log = new LoggerConfiguration()
+                        .MinimumLevel.Debug()
+                        .WriteTo.LiterateConsole()
+                        .WriteTo.RollingFile(m_path + "\\{Date}.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                        .CreateLogger() ) {
+                    if(type) log.Information( s, o );
+                    else log.Error( s, o );
                     rc = (int)constants.err.s_ok;
                 }
-                catch (Exception e) {
+            }
+            catch (Exception e) {
                     Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
-                }
             }
             return rc;
         }
@@ -201,10 +210,10 @@ namespace ciodans {
                 }
             }
             catch (XmlException e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -236,10 +245,10 @@ namespace ciodans {
                 }
             }
             catch (XmlException e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {N}: {D}", xpath, xdoc, e.GetType().Name, e.Message);
+                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -264,7 +273,7 @@ namespace ciodans {
                 if (fLog != 0) log("Подключение {UID}@{DSN} проверено", uid, dsn);
              }
             catch (OracleException e) {
-                logerr("Ошибка проверки подключения {UID}@{DSN} - {N}: {D}", uid, dsn, e.GetType().Name, e.Message);
+                logerr("Ошибка проверки подключения {UID}@{DSN} - {eName}: {e:Desc}", uid, dsn, e.GetType().Name, e.Message);
             }
             return rc;
         }  
@@ -305,25 +314,41 @@ namespace ciodans {
             connectId = 0;
             try {
                 constr.AppendFormat("User Id={0};Password={1};Data Source={2}; Enlist=false", uid, pwd, dsn);
-                var oc = new oraset(new OracleConnection(constr.ToString())); 
-                oc.m_con.Open();
+                var oc = new OracleConnection(constr.ToString()); 
+                oc.Open();
                 if (m_con_list.Count == 0) m_con_id = 1;
                 else m_con_id = m_con_list.Last()._tkey + 1;
                 m_con_list.Add( m_con_id, oc );
-                rc=oexecute( m_con_id, "set role workspace identified by " + role, "" );
-                if (rc == (int)constants.err.s_ok) 
-                    rc = oexecute(m_con_id, "call prc_connect(" + prc + ")", "" );
-                if (rc == (int)constants.err.s_ok) {
-                    log("Соединение #{N} {UID}@{DSN} установлено", m_con_id, uid, dsn);
-                    connectId = m_con_id;
-                }
-                else {
-                    logerr("Ошибка установки соединения {UID}@{DSN}", uid, dsn);
-                    odisconnect(m_con_id);
-                }
+                rc = (int)constants.err.s_ok;
+                log("Подключение #{CONID} {UID}@{DSN} установлено", m_con_id, uid, dsn);
+                connectId = m_con_id;
             }
 			catch(OracleException e) {
-                logerr("Ошибка установки соединения {UID}@{DSN} - {N}: {D}", uid, dsn, e.GetType().Name, e.Message);
+                logerr("Ошибка установки подключения {UID}@{DSN} - {eName}: {e:Desc}", uid, dsn, e.GetType().Name, e.Message);
+            }
+            return rc;
+        }
+        /// <summary>
+        /// Инициализация пользователя (role, prc_connect)
+        /// </summary>
+        /// <param name="connectId"></param>
+        /// <param name="role"></param>
+        /// <param name="prc"></param>
+        /// <returns></returns>
+        public int opostconnect(int connectId, string sRole, string sPrc) {
+            int rc = (int)constants.err.e_fault;
+            
+            try {
+                rc = oexecute(connectId, "set role workspace identified by " + sRole, "");
+                if (rc == (int)constants.err.s_ok) 
+                    rc = oexecute(connectId, "call prc_connect(" + sPrc + ")", "");
+                if (rc != (int)constants.err.s_ok) {
+                    logerr("Ошибка инициализации пользователя подключения #{CONID}", connectId);
+                    odisconnect(connectId);
+                }
+            }
+            catch (OracleException e) {
+                logerr("Ошибка инициализации пользователя подключения #{CONID}- {eName}: {e:Desc}", connectId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -358,18 +383,18 @@ namespace ciodans {
         {
 			try {
                 int _index = m_con_list.FindIndex(m => m._tkey == connectId);
-                var oc = m_con_list[_index]._tvalue.m_con;
+                var oc = m_con_list[_index]._tvalue;
 
                 if (oc.State == ConnectionState.Open) {
                     oexecute(connectId, "BEGIN PCK_ADM.PRC_REGISTRATION_DEL; END;", "" ); 
                     oc.Close();
                     oc.Dispose();
-                    log("Соединение {N} закрыто", connectId);
+                    log("Подключение #{CONID} закрыто", connectId);
                     m_con_list.RemoveAt(_index);
                 }
             }
             catch (Exception e) {
-                logerr("Ошибка отключения от базы данных {F} - {N}: {D}", connectId, e.GetType().Name, e.Message);
+                logerr("Ошибка отключения от базы данных #{CONID} - {eName}: {e:Desc}", connectId, e.GetType().Name, e.Message);
             }			
 		}
         /// <summary>
@@ -399,7 +424,7 @@ namespace ciodans {
                     rc = (int)constants.err.s_ok;
                 }
                 catch (Exception e) {
-                    logerr("Ошибка записи запроса запроса {A} - {N}: {D}", sask, e.GetType().Name, e.Message);
+                    logerr("Ошибка записи запроса запроса {A} - {eName}: {e:Desc}", sask, e.GetType().Name, e.Message);
                 }
             }
             return rc;
@@ -423,10 +448,10 @@ namespace ciodans {
                 rc = (int)constants.err.s_ok;
             }
             catch (InvalidOperationException e) {
-                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {N}: {D}", value, name, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", value, name, stmtId, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {N}: {D}", value, name, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", value, name, stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -459,7 +484,7 @@ namespace ciodans {
                 }
             }
             catch (Exception e) {
-                logerr("Ошибка привязки биндлиста {B} к запросу {A} - {N}: {D}", xpathbind, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка привязки биндлиста {B} к запросу {A} - {eName}: {e:Desc}", xpathbind, stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -478,7 +503,7 @@ namespace ciodans {
                 rc = (int)constants.err.s_ok;
             }
             catch (Exception e) {
-                logerr("Ошибка очистки запроса {F} - {N}: {D}", stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка очистки запроса {F} - {eName}: {e:Desc}", stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -503,7 +528,7 @@ namespace ciodans {
             }
             catch (Exception e)
             {
-                logerr("Ошибка выполнения запроса '{A}' - {N}: {D}", stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка выполнения запроса '{A}' подключения #{CONID} - {eName}: {e:Desc}", stmtId, connectId, e.GetType().Name, e.Message);
                 rc = (int)constants.err.e_param;
             }            
             return rc;
@@ -523,7 +548,6 @@ namespace ciodans {
             if (sXml != "") rc = cfgReadAttr(sXml, sRequest, "ask", ref sask);
             
             if(rc != (int)constants.err.e_cfgread) {
-                oraset oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
                 int _id = 0;
                 rc = osetstatement(sask, ref _id);
                 if(rc==0) rc = oexecute(connectId, _id, true);
@@ -544,7 +568,7 @@ namespace ciodans {
             int rc = (int)constants.err.e_fault;
             string sask="";
             try {
-                var _oc = m_con_list.First(m => m._tkey == connectId)._tvalue.m_con;
+                var _oc = m_con_list.First(m => m._tkey == connectId)._tvalue;
                 statement _st = m_ost.First(m => m._id == stmtId);
                 if(_oc.State == ConnectionState.Open) {
                     sask=_st._request;
@@ -570,10 +594,10 @@ namespace ciodans {
                 }
             }
             catch (OracleException e) {
-                logerr("Ошибка выполнения команды '{A}' - {N}: {D}", sask, e.GetType().Name, e.Message);
+                logerr("Ошибка выполнения команды '{A}' подключения #{CONID} - {eName}: {e:Desc}", sask, connectId, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                logerr("Ошибка выполнения команды '{A}' - {N}: {D}", sask, e.GetType().Name, e.Message);
+                logerr("Ошибка выполнения команды '{A}' подключения #{CONID} - {eName}: {e:Desc}", sask, connectId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -615,10 +639,10 @@ namespace ciodans {
                 }
             }
             catch (OracleException e) {
-                logerr("Ошибка выборки записи '{A}' запроса {B} - {N}: {D}", recOff, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка выборки записи '{A}' запроса {B} - {eName}: {e:Desc}", recOff, stmtId, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                logerr("Ошибка выборки записи '{A}' запроса {B} - {N}: {D}", recOff, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка выборки записи '{A}' запроса {B} - {eName}: {e:Desc}", recOff, stmtId, e.GetType().Name, e.Message);
             }
             finally {
                 CTAPI.ctClose(cihndl);
@@ -641,7 +665,7 @@ namespace ciodans {
             }
             catch (Exception e)
             {
-                logerr("Ошибка oend({A},{B}) - {N}: {D}", connectId, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка oend({A},{B}) - {eName}: {e:Desc}", connectId, stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -692,7 +716,7 @@ namespace ciodans {
                 }
             }
             catch (Exception e) {
-                logerr("Ошибка вставки данных биндлиста {B} в таблицу {T} - {N}: {D}", xpathbind, _table, e.GetType().Name, e.Message);
+                logerr("Ошибка вставки данных биндлиста {B} в таблицу {T} подключения #{CONID} - {eName}: {e:Desc}", xpathbind, _table, connectId, e.GetType().Name, e.Message);
             }
             finally {
 //                Marshal.FreeCoTaskMem(pval);
@@ -749,7 +773,7 @@ namespace ciodans {
                 }
             }
             catch (Exception e) {
-                logerr("Ошибка обновления данных биндлиста {B} в таблице {T} - {N}: {D}", xpathbind, _table, e.GetType().Name, e.Message);
+                logerr("Ошибка обновления данных биндлиста {B} в таблице {T} подключения #{CONID} - {eName}: {e:Desc}", xpathbind, _table, connectId, e.GetType().Name, e.Message);
             }
             finally {
                 CTAPI.ctClose(cihndl);

@@ -24,11 +24,6 @@ namespace ciodans {
             int rc = base.oconnect( dsn, uid, pwd, ref connectId );
             return (rc == 0) ? connectId : 0;
         }
-        public int oconnect_prc( string dsn, string uid, string pwd, string prc, string role ) {
-            int connectId = 0;
-            int rc = base.oconnect( dsn, uid, pwd, ref connectId, prc, role );
-            return (rc==0)?connectId:0;
-        }
         public int oconnecthidden(string sxml, string sxpath) {
             int connectId = 0;
             int rc = base.oconnect(sxml, sxpath, ref connectId);
