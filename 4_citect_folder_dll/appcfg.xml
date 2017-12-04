@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<application>
+  <Structure name="sysconfig" ServerNodeName="IOServer1" ServerDataPath="\\NB-VIDN-SCADA" SpillTimeout="30" SpillPower="49">
+    <Actuators name="mm420config" port="5" number="2" first="1" />
+    <Storages name="storconfig" Number="40" timerInsert="5">
+      <tank name="tank1" number="34" levelEvaluate="0" autozam="1" />
+      <tank name="tank2" number="35" levelEvaluate="0" autozam="1" />
+      <tank name="tank3" number="36" levelEvaluate="0" autozam="1" />
+      <tank name="tank4" number="37" levelEvaluate="0" autozam="1" />
+      <tank name="tank5" number="38" levelEvaluate="0" autozam="1" />
+      <tank name="tank6" number="1" levelEvaluate="0" autozam="1" />
+      <tank name="tank7" number="2" levelEvaluate="0" autozam="1" />
+      <tank name="tank8" number="3" levelEvaluate="0" autozam="1" />
+      <tank name="tank9" number="4" levelEvaluate="0" autozam="1" />
+      <tank name="tank10" number="5" levelEvaluate="0" autozam="1" />
+      <tank name="tank11" number="6" levelEvaluate="0" autozam="1" />
+      <tank name="tank12" number="7" levelEvaluate="0" autozam="1" />
+      <tank name="tank13" number="8" levelEvaluate="0" autozam="1" />
+      <tank name="tank14" number="9" levelEvaluate="0" autozam="1" />
+      <tank name="tank15" number="10" levelEvaluate="0" autozam="1" />
+      <tank name="tank16" number="11" levelEvaluate="0" autozam="1" />
+      <tank name="tank17" number="12" levelEvaluate="0" autozam="1" />
+      <tank name="tank18" number="13" levelEvaluate="0" autozam="1" />
+      <tank name="tank19" number="14" levelEvaluate="0" autozam="1" />
+      <tank name="tank20" number="15" levelEvaluate="0" autozam="1" />
+      <tank name="tank21" number="16" levelEvaluate="0" autozam="1" />
+      <tank name="tank22" number="17" levelEvaluate="0" autozam="1" />
+      <tank name="tank23" number="18" levelEvaluate="0" autozam="1" />
+      <tank name="tank24" number="19" levelEvaluate="0" autozam="1" />
+      <tank name="tank25" number="20" levelEvaluate="0" autozam="1" />
+      <tank name="tank26" number="21" levelEvaluate="0" autozam="1" />
+      <tank name="tank27" number="22" levelEvaluate="0" autozam="1" />
+      <tank name="tank28" number="23" levelEvaluate="0" autozam="1" />
+      <tank name="tank29" number="24" levelEvaluate="0" autozam="1" />
+      <tank name="tank30" number="25" levelEvaluate="0" autozam="1" />
+      <tank name="tank31" number="26" levelEvaluate="0" autozam="1" />
+      <tank name="tank32" number="27" levelEvaluate="0" autozam="1" />
+      <tank name="tank33" number="28" levelEvaluate="0" autozam="1" />
+      <tank name="tank34" number="29" levelEvaluate="0" autozam="1" />
+      <tank name="tank35" number="30" levelEvaluate="0" autozam="1" />
+      <tank name="tank36" number="31" levelEvaluate="0" autozam="1" />
+      <tank name="tank37" number="32" levelEvaluate="0" autozam="1" />
+      <tank name="tank38" number="33" levelEvaluate="0" autozam="1" />
+      <tank name="tank39" number="39" levelEvaluate="0" autozam="1" />
+      <tank name="tank40" number="40" levelEvaluate="0" autozam="1" />
+    </Storages>
+    <ASNs name="asnconfig" Number="8">
+      <asn name="asn1" number="211" />
+      <asn name="asn2" number="212" />
+      <asn name="asn3" number="213" />
+      <asn name="asn4" number="214" />
+      <asn name="asn5" number="215" />
+      <asn name="asn6" number="216" />
+      <asn name="asn7" number="217" />
+      <asn name="asn8" number="218" />
+    </ASNs>
+    <TERMs name="termconfig" Number="8" ButtonStartLoading="0">
+      <term name="term1" number="1" />
+      <term name="term2" number="2" />
+      <term name="term3" number="3" />
+      <term name="term4" number="4" />
+      <term name="term5" number="5" />
+      <term name="term3" number="6" />
+      <term name="term4" number="7" />
+      <term name="term5" number="8" />
+    </TERMs>
+    <Parameters name="fillsetup" addon="0" dozeoff="1" block_DensEvaluate="0" dozeMin="20" />
+  </Structure>
+  <SQL name="sqlconfig" simulation="0" dsn="orcl" user="fox" fulllog="1" code="zBmblfkRGZtoIHqMVXdBjQ==">
+    <Select name="TANKINFO" ask="SELECT s.num_stor, s.id, s.BASE_HEIGHT, s.DEAD_REST, pck_goods.get_gds_short(pck_inv.NMCL_STORAGE_DEFAULT_ID(s.id))as name, fs.id as SENSOR_ID FROM storage s, fixed_sensor fs WHERE pck_inv.FNC_STORAGE_STATUS(s.id) = 1 AND s.id = fs.storage_id and sysdate &amp;gt= fs.begin_date and sysdate &amp;lt fs.sp_end_date AND fs.asu_number &amp;gt ':seqno1' and fs.asu_number &amp;lt ':seqno2'" />
+    <Select name="test insert1" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000131, 511000000000262, 7, 111.1, :density, 11.1, ':density')" />
+    <Select name="test insert2" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000140, 511000000000270, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 222.2, :density, 12.2, ':datetime')" />
+  </SQL>
+  <BindLists>
+    <BindList name="TANKINI">
+      <item name="tankNUM#0" column="NUM_STOR" />
+      <item name="tankID#0" column="ID" />
+      <item name="tankHeight#0" column="BASE_HEIGHT" />
+      <item name="tankDeadRest#0" column="DEAD_REST" />
+      <item name="tankFUEL#0" column="NAME" />
+      <item name="tanksensorID#0" column="SENSOR_ID" />
+    </BindList>
+    <BindList name="UPDTEST" table="OUT_WBILL_RAW">
+      <where name="lineid#0" column="LINE_ID" />
+      <item name="LI71#0" column="IN_VOLUME" />
+      <item name="TI71#0" column="IN_WEIGHT" />
+    </BindList>
+    <BindList name="INSERT_SENSOR_READING" table="SENSOR_READING">
+      <item name="LI71#0" column="FILL_UP_LEVEL" />
+      <item name="LI72#0" column="WATER_LEVEL" />
+      <item name="DI71#0" column="DENCITY" />
+      <item name="TI71##" column="TEMPERATURE" />
+      <item name="tankSensorID##" column="FIXED_SENSOR_ID" />
+      <item name="tankId##" column="STORAGE_ID" />
+      <item name="operType##" column="OPER_TYPE" />
+    </BindList>
+    <BindList name="INSERT_SENSOR_READING_OBJ" table="SENSOR_READING">
+      <item name="TANK_#00.level" column="FILL_UP_LEVEL" />
+      <item name="TANK_#00.waterLevel" column="WATER_LEVEL" />
+      <item name="TANK_#00.density" column="DENCITY" />
+      <item name="TANK_#00.temperature" column="TEMPERATURE" />
+      <item name="TANK_#00.sensorID" column="FIXED_SENSOR_ID" />
+      <item name="TANK_#00.id" column="STORAGE_ID" />
+      <item name="TANK_#00.typeMeas" column="OPER_TYPE" />
+    </BindList>
+  </BindLists>
+</application>
