@@ -17,7 +17,6 @@ namespace ciodans {
     static class constants {
         public enum err { s_ok, e_fault, e_param, e_cfgread, e_cfgwrite, e_noitems };
     }
-
     /// <summary>
     /// Класс, реализующий пару ключ-значение
     /// </summary>
@@ -62,9 +61,8 @@ namespace ciodans {
             Add(new Pair<T1, T2>(key, value));
         }
     }
-
     /// <summary>
-    /// Класс, реализующий ячейку хранения запроса
+    /// Класс, реализующий ячейку хранения запроса и результата
     /// </summary>
     public class statement : IEquatable<statement> {
         public int _id { get; set; }
@@ -98,15 +96,6 @@ namespace ciodans {
             _binds.Clear();
         }
     }
-    /*
-    public class oraset
-    {
-        public OracleConnection m_con;
-        public oraset(OracleConnection oc) {
-            m_con = oc;
-        }
-    }
-    */
     /// <summary>
     /// Класс работы с БД Оракл через Oracle.DataAccess
     /// </summary>
@@ -118,7 +107,6 @@ namespace ciodans {
         public int fLog { get; set; }
         public int connectionId { get { return m_con_id; } }
         public int statementId { get { return m_stmt_id; } }
-        private Serilog.Core.Logger m_log;
         private List<statement> m_ost = new List<statement>();  // список запросов к БД
         private PairList<int, OracleConnection> m_con_list = new PairList<int, OracleConnection>();
         private static int m_con_id = 0;
@@ -129,7 +117,7 @@ namespace ciodans {
         /// Инициализация системы логгирования
         /// </summary>
         /// <param name="path">Путь до папки для складывания логов</param>
-        /// <returns>Код возврата (=0 - good, =-1 - не смогла найти путь, =-2 - не смогла создать логгер)</returns>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int initlog(string path) {
             int rc = (int)constants.err.e_fault;
             if (path != "" && Directory.Exists(path)) {
@@ -137,13 +125,6 @@ namespace ciodans {
                 if (sp.LastIndexOf('\\') < sp.Length - 1) sp += @"\";
                 try {
                     sp = Path.GetDirectoryName(sp);
-                    /*
-                    m_log = new LoggerConfiguration()
-                        .MinimumLevel.Debug()
-                        .WriteTo.LiterateConsole()
-                        .WriteTo.RollingFile(sp + "\\{Date}.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                        .CreateLogger();
-                    */ 
                     m_path = sp;
                     rc = (int)constants.err.s_ok;
                 }
@@ -154,17 +135,16 @@ namespace ciodans {
                     Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
                 }
             }
-
             return rc;
         }
-        /// <summary
-        /// Положить в лог
+        /// <summary>
+        /// Логгирование сообщения
         /// </summary>
         /// <param name="type">Тип сообщения: =тру - инфо, =фолс - об ошибке</param>
         /// <param name="s">Основное сообщение</param>
         /// <param name="o">Массив значений тэгов сообщения o[0..n]</param>
         /// <example>log("Достигнут максисум {MAX}", nValue)</example>  
-        /// <returns>Код возврата (=0 - good, =-1 - не смогла выполнить)</returns>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int log( bool type, string s, params object[] o ) {
             int rc = (int)constants.err.e_fault;
             try {
@@ -183,21 +163,34 @@ namespace ciodans {
             }
             return rc;
         }
+        /// <summary>
+        /// Логгирование информационных сообщений
+        /// </summary>
+        /// <param name="s">Основное сообщение</param>
+        /// <param name="o">Массив значений тэгов сообщения o[0..n]</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int log(string s, params object[] o) {
             return log(true, s, o);
         }
+        /// <summary>
+        /// Логгирование сообщений об ошибке
+        /// </summary>
+        /// <param name="s">Основное сообщение</param>
+        /// <param name="o">Массив значений тэгов сообщения o[0..n]</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int logerr(string s, params object[] o) {
             return log(false, s, o);
         }
         /// <summary>
-        /// Чтение значения атрибута по заданному пути
+        /// Чтение значения атрибута по заданному пути Xml-файла
         /// </summary>
         /// <param name="xdoc">Имя файла с полным путем</param>
-        /// <param name="xpath">Путь до узла с требуемым атрибутом</param>
-        /// <example>xpath = "..//Select[@name="ASNINFO"]"</example>
+        /// <param name="xpath">Путь до узла с требуемым атрибутом
+        /// <example>xpath = ".//Select[@name="ASNINFO"]"</example>
+        /// </param>
         /// <param name="xnameattr">Название считываемого атрибута</param>
         /// <param name="attrvalue">Считанное значение атрибута</param>
-        /// <returns>Код возврата (=0 - good, =-1 - не смогла найти путь, =-2 - не смогла прочитать запрос)</returns>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int cfgReadAttr(string xdoc, string xpath, string xnameattr, ref string attrvalue) {
             int rc = (int)constants.err.e_cfgread;
             try {
@@ -220,11 +213,13 @@ namespace ciodans {
         /// <summary>
         /// Запись атрибута в Xml-файл
         /// </summary>
-        /// <param name="xdoc"></param>
-        /// <param name="xpath"></param>
-        /// <param name="xnameattr"></param>
-        /// <param name="attrvalue"></param>
-        /// <returns></returns>
+        /// <param name="xdoc">Имя файла с полным путем</param>
+        /// <param name="xpath">Путь до узла с требуемым атрибутом
+        /// <example>xpath = ".//SQL"</example>
+        /// </param>
+        /// <param name="xnameattr">Название записываемого атрибута</param>
+        /// <param name="attrvalue">Записываемое значение атрибута</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int cfgWriteAttr(string xdoc, string xpath, string xnameattr, string attrvalue) {
             int rc = (int)constants.err.e_cfgwrite;
             try {
@@ -255,10 +250,10 @@ namespace ciodans {
         /// <summary>
         /// Проверка подключения к БД
         /// </summary>
-        /// <param name="dsn"></param>
-        /// <param name="uid"></param>
-        /// <param name="pwd"></param>
-        /// <returns></returns>
+        /// <param name="dsn">Источник данных</param>
+        /// <param name="uid">Имя пользователя</param>
+        /// <param name="pwd">Пароль</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int otestconnect(string dsn, string uid, string pwd) {
             int rc = (int)constants.err.e_fault;
             StringBuilder constr = new StringBuilder(); 
@@ -280,17 +275,18 @@ namespace ciodans {
         /// <summary>
         /// Сохранение зашифрованного пароля в Xml-файле с проверкой подключения
         /// </summary>
-        /// <param name="sXML"></param>
-        /// <param name="sxpath"></param>
-        /// <param name="dsn"></param>
-        /// <param name="uid"></param>
-        /// <param name="pwd"></param>
-        /// <returns></returns>
+        /// <param name="sXML">Имя файла с полным путем</param>
+        /// <param name="sxpath">Путь до узла с требуемым атрибутом
+        /// <example>xpath = ".//SQL"</example>
+        /// </param>
+        /// <param name="dsn">Источник данных</param>
+        /// <param name="uid">Имя пользователя</param>
+        /// <param name="pwd">Пароль</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int osavedbuser( string sXML, string sxpath, string dsn, string uid, string pwd ) {
             int rc = otestconnect( dsn, uid, pwd);
             if (rc == (int)constants.err.s_ok) {
                 cfgWriteAttr(sXML, sxpath, "user", uid);
-//                cfgWriteAttr(sXML, sxpath, "code", RijndaelManagedEncryption.RijndaelManagedEncryption.EncryptRijndael(pwd, RijndaelManagedEncryption.RijndaelManagedEncryption._salt));
                 rc=cfgWriteAttr(sXML, sxpath, "code", RijndaelManagedEncryption.RijndaelManagedEncryption.EncryptRijndael(pwd, sXML));
             }
             return rc;
@@ -302,12 +298,10 @@ namespace ciodans {
         /// <param name="dsn">Источник данных</param>
         /// <param name="uid">Имя пользователя</param>
         /// <param name="pwd">Пароль</param>
-        /// <param name="connectID">Мдентификатор созданного соединения</param>
-        /// <param name="prc">[Идентификатор принадлежности пользователя объекту]</param>
-        /// <param name="role">[Установка роли]</param>
-        /// <returns>Код возврата (=0 - good, =-1 - не смогла выполнить)</returns>
+        /// <param name="connectId">[out] Идентификатор соединения</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         /// <remarks>Метод после соединения выполняет сетроле и прц-коннект</remarks>
-        public int oconnect(string dsn, string uid, string pwd, ref int connectId, string prc="", string role="eagle_park") {
+        public int oconnect(string dsn, string uid, string pwd, ref int connectId) {
             int rc = (int)constants.err.e_fault;
             StringBuilder constr = new StringBuilder(); 
 
@@ -331,10 +325,11 @@ namespace ciodans {
         /// <summary>
         /// Инициализация пользователя (role, prc_connect)
         /// </summary>
-        /// <param name="connectId"></param>
-        /// <param name="role"></param>
-        /// <param name="prc"></param>
-        /// <returns></returns>
+        /// <param name="connectId">Идентификатор соединения</param>
+        /// <param name="sRole">Роль пользователя</param>
+        /// <param name="sPrc">Идентификатор пользователя</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
         public int opostconnect(int connectId, string sRole, string sPrc) {
             int rc = (int)constants.err.e_fault;
             
@@ -344,7 +339,7 @@ namespace ciodans {
                     rc = oexecute(connectId, "call prc_connect(" + sPrc + ")", "");
                 if (rc != (int)constants.err.s_ok) {
                     logerr("Ошибка инициализации пользователя подключения #{CONID}", connectId);
-                    odisconnect(connectId);
+//                    odisconnect(connectId);
                 }
             }
             catch (OracleException e) {
@@ -355,10 +350,12 @@ namespace ciodans {
         /// <summary>
         /// Подключение к БД с помощью зашифрованного пароля в Xml-файле
         /// </summary>
-        /// <param name="sXML"></param>
-        /// <param name="sXpath"></param>
-        /// <param name="connectId"></param>
-        /// <returns></returns>
+        /// <param name="sXML">Имя файла с полным путем</param>
+        /// <param name="sXpath">Путь до узла с требуемым атрибутом
+        /// <example>xpath = ".//SQL"</example>
+        /// </param>
+        /// <param name="connectId">[out] Идентификатор соединения</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int oconnect(string sXML, string sXpath, ref int connectId) {
             int rc = (int)constants.err.e_fault;
             string dsn = "";
@@ -369,16 +366,15 @@ namespace ciodans {
             cfgReadAttr(sXML, sXpath, "user", ref uid);
             cfgReadAttr(sXML, sXpath, "code", ref pwd);
             pwd = RijndaelManagedEncryption.RijndaelManagedEncryption.DecryptRijndael(pwd, sXML);
-//            pwd = RijndaelManagedEncryption.RijndaelManagedEncryption.DecryptRijndael(pwd, RijndaelManagedEncryption.RijndaelManagedEncryption._salt);
-//            log("oconnect {d} {s} {n}", dsn, uid, pwd);
             rc = oconnect(dsn, uid, pwd, ref connectId);
             return rc;
         }
         /// <summary>
         /// Отключение от БД
         /// </summary>
-        /// <param name="connectID">Мдентификатор соединения</param>
+        /// <param name="connectId">Идентификатор соединения</param>
         /// <remarks>Метод после соединения выполняет прц-дисконнект</remarks>
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
         public void odisconnect(int connectId)
         {
 			try {
@@ -400,8 +396,10 @@ namespace ciodans {
         /// <summary>
         /// Установка запроса SQL для последующего заполнения параметрами и выполнения 
         /// </summary>
-        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) <example>Ex.: xpath = "..//Select[@name="ASNINFO"]"</example></param>
-        /// <param name="stmtId">out - Идентификатор запроса</param>
+        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) 
+        /// <example>Ex.: xpath = ".//Select[@name="ASNINFO"]"</example>
+        /// </param>
+        /// <param name="stmtId">[out] Идентификатор запроса</param>
         /// <param name="sXml">[Имя Xml-файла с полным путем]</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         public int osetstatement(string sRequest, ref int stmtId, string sXml = "")
@@ -436,7 +434,7 @@ namespace ciodans {
         /// <param name="name">Название параметра</param>
         /// <param name="value">Значение параметра</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        /// <remarks>Идентификатор был получен osetstatement</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
         public int osetparameter(int stmtId, string name, string value) {
             int rc = (int)constants.err.e_fault;
             try {
@@ -459,10 +457,12 @@ namespace ciodans {
         /// Добавление бинд-листа к подготавливаемому запросу
         /// </summary>
         /// <param name="stmtId">Идентификатор запроса</param>
-        /// <param name="xpathbind">xpath-запрос до бинд-листа <example>Ex.: xpath = "..//BindList[@name="ASNINI"]"</example></param>
+        /// <param name="xpathbind">xpath-запрос до бинд-листа 
+        /// <example>Ex.: xpath = ".//BindList[@name="ASNINI"]"</example>
+        /// </param>
         /// <param name="xdoc">Xml-файл с полным путем</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        /// <remarks>Идентификатор был получен osetstatement</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
         public int oaddbindlist(int stmtId, string xpathbind, string xdoc)
         {
             int rc = (int)constants.err.e_fault;
@@ -493,7 +493,7 @@ namespace ciodans {
         /// </summary>
         /// <param name="stmtId">Идентификатор запроса</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        /// <remarks>Идентификатор был получен osetstatement</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
         public int oclrstatement(int stmtId)
         {
             int rc = (int)constants.err.e_fault;
@@ -513,7 +513,8 @@ namespace ciodans {
         /// <param name="connectId">Идентификатор соединения</param>
         /// <param name="stmtId">Идентификатор запросa</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        /// <remarks>Идентификатор был получен osetstatement</remarks>
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
         public int oexecute(int connectId, int stmtId)
         {
             int rc = (int)constants.err.e_fault;
@@ -537,9 +538,12 @@ namespace ciodans {
         /// Выполнить запрос SQL (выражение или из файла)
         /// </summary>
         /// <param name="connectId">Идентификатор соединения</param>
-        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) <example>Ex.:.//Select[@name="readTanks"]</example></param>
+        /// <param name="sRequest">Запрос(или имя запроса в Xml-файле) 
+        /// <example>Ex.:.//Select[@name="readTanks"]</example>
+        /// </param>
         /// <param name="sXml">[Имя Xml-файла с полным путем]</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
         public int oexecute(int connectId, string sRequest = "", string sXml = "")
         {
             int rc = (int)constants.err.e_fault;
@@ -561,8 +565,9 @@ namespace ciodans {
         /// <param name="connectId">Идентификатор соединения</param>
         /// <param name="stmtId">Идентификатор запроса</param>
         /// <param name="fNoRec">Флаг выборки данных, если true - не надо</param>
-        /// <param name="fLog">[true - положить результат в лог]</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
         private int oexecute(int connectId, int stmtId, bool fNoRec)
         {
             int rc = (int)constants.err.e_fault;
@@ -578,7 +583,6 @@ namespace ciodans {
                         _ocm.ExecuteNonQuery();
                     }
                     else {
-//                        m_con_list.First(m => m._tkey == connectId)._tvalue.m_dr = _ocm.ExecuteReader();
                         OracleDataReader _dr = _ocm.ExecuteReader();
                         m_ost.First(m => m._id == stmtId)._dt.Clear();
                         if(!_dr.IsClosed) {
@@ -588,7 +592,7 @@ namespace ciodans {
                     }
                     _ocm.Dispose();
                     string scont = "set role workspace";
-                    if (sask.ToLower().Contains(scont)) sask = scont;
+                    if (sask.ToLower().Contains(scont)) sask = "Role set.";
                     if (fLog!=0) log("{A}", sask);
                     rc = (int)constants.err.s_ok;
                 }
@@ -608,7 +612,8 @@ namespace ciodans {
         /// <param name="recOff">Номер выбираемой записи</param>
         /// <param name="suff">Суффикс, добавляемый к имени тэга или объекта</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        public int ogetrecord(int stmtId, int recOff=0, int suff=0) {
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
+        public int ogetrecord(int stmtId, int recOff = 0, int suff = 0) {
             int rc = (int)constants.err.e_fault;
             uint cihndl = 0;
             try {
@@ -656,7 +661,9 @@ namespace ciodans {
         /// <param name="connectId">Идентификатор соединения</param>
         /// <param name="stmtId">Идентификатор запроса</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        public int oend(int connectId, int stmtId=0) {
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
+        public int oend(int connectId, int stmtId = 0) {
             int rc = (int)constants.err.e_fault;
             try {
                 m_ost.First(m => m._id == stmtId)._dt.Clear();
@@ -678,7 +685,8 @@ namespace ciodans {
         /// <param name="suff">Суффикс, добавляемый к названию тэга или объекта</param>
         /// <param name="sztable">Имя таблицы <remarks>Если пустая строка, то берем из биндлиста</remarks></param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        public int oinsert(int connectId, string xpathbind, string xdoc, int suff = 0, string sztable="") {
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
+        public int oinsert(int connectId, string xpathbind, string xdoc, int suff = 0, string sztable = "") {
             int rc = (int)constants.err.e_fault;
             uint cihndl = 0;
             var _table = sztable;
@@ -734,7 +742,8 @@ namespace ciodans {
         /// <param name="suff">Суффикс, добавляемый к названию тэга или объекта</param>
         /// <param name="sztable">Имя таблицы <remarks>Если пустая строка, то берем из биндлиста</remarks></param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        public int oupdate(int connectId, string xpathbind, string xdoc, int suff = 0, string sztable="") {
+        /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
+        public int oupdate(int connectId, string xpathbind, string xdoc, int suff = 0, string sztable = "") {
             int rc = (int)constants.err.e_fault;
             uint cihndl = 0;
             var _table = sztable;

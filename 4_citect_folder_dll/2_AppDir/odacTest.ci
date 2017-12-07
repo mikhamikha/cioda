@@ -66,8 +66,9 @@ FUNCTION RunDllTest()
 	INT fLog;
 	INT hDoc, hNode;
 	STRING sUser, sPwd;
-
-	IF initCIODA(sPathDll ) THEN
+	
+// создадим объект cioda для работы с БД и логами
+	IF initCIODA( sPathDll ) THEN
 // секция инициализации пользователя	
 		ErrSet(1);
 		hDoc=XMLOpen( sXML );
@@ -90,8 +91,8 @@ FUNCTION RunDllTest()
 		END
 		ErrSet(0);
 // конец секции инициализации пользователя	
-
 		TaskNew("task1", "", 8);
+		SleepMS(100);
 		TaskNew("task2", "", 8);
 	ELSE 
 		Message(StrToLocalText("@(Fatal Error)"), StrToLocalText("@(DLL not found)")+ " " + sPathDll, 48);
@@ -99,59 +100,84 @@ FUNCTION RunDllTest()
 END
 
 FUNCTION task1()
+	INT rc=-1;
 	INT conId1;
 	INT stmtId1;
 	STRING sXML = PathToStr("[RUN]:dll\appcfg.xml");
 	STRING sPathSQL = ".//SQL";
-	DllClassCallMethod( hODAC, "log", "Connecting to DB..." );
 
 	// 1. подключаемся к БД
 	conId1 = DllClassCallMethod( hODAC, "oconnecthidden", sXML, sPathSQL );
-	DllClassCallMethod( hODAC, "opostconnect", conId1, "eagle_park", "" );
-	// 2. составляем параметризированный запрос без выборки строк	
-    stmtId1= DllClassCallMethod( hODAC, "osetstatement", ".//Select[@name=^"test insert1^"]", sXML );
-    DllClassCallMethod( hODAC, "osetparameter", stmtId1, ":density", "0.7777" );	
-	// 2а. выполним запрос 
-    DllClassCallMethod( hODAC, "oexecute", conId1, stmtId1 );
-    // 2б. очистим кэш	
-    DllClassCallMethod( hODAC, "oclrstatement", stmtId1 );
-    
-	// 3. делаем запросы на insert и update по биндлистам
-    DllClassCallMethod( hODAC, "oinsert", conId1, ".//BindList[@name=^"INSERT_SENSOR_READING_OBJ^"]", sXML, 112 );
-    DllClassCallMethod( hODAC, "oupdate", conId1, ".//BindList[@name=^"UPDTEST^"]", sXML, 3 );
-
-	// 4. Отключаемся от БД
-   	DllClassCallMethod(hODAC, "odisconnect", conId1);
+	IF conId1 THEN
+		rc=DllClassCallMethod( hODAC, "opostconnect", conId1, "eagle_park", "" );
+	END
+	IF NOT rc THEN
+		// 2. составляем параметризированный запрос без выборки строк	
+	    stmtId1= DllClassCallMethod( hODAC, "osetstatement", ".//Select[@name=^"test insert1^"]", sXML );
+	    DllClassCallMethod( hODAC, "osetparameter", stmtId1, ":density", "0.7777" );	
+		// 2а. выполним запрос 
+	    DllClassCallMethod( hODAC, "oexecute", conId1, stmtId1 );
+	    // 2б. очистим кэш	
+	    DllClassCallMethod( hODAC, "oclrstatement", stmtId1 );
+	    
+		// 3. делаем запросы на insert и update по биндлистам
+	    DllClassCallMethod( hODAC, "oinsert", conId1, ".//BindList[@name=^"INSERT_SENSOR_READING_OBJ^"]", sXML, 112 );
+	    DllClassCallMethod( hODAC, "oupdate", conId1, ".//BindList[@name=^"UPDTEST^"]", sXML, 3 );
+	END
+	
+	IF conId1 THEN
+		// 4. Отключаемся от БД
+	   	DllClassCallMethod(hODAC, "odisconnect", conId1);
+	END
 END
 
 FUNCTION task2()
+	INT rc=-1;
 	INT conId2;
 	INT stmtId2;
 	STRING sXML = PathToStr("[RUN]:dll\appcfg.xml");
 	STRING sPathSQL = ".//SQL";
-
+	
+	LogMessageErr("Тест лога ошибок");
+	LogMessage("Подключаемся к БД из потока 2");
+	
 	// 1. подключаемся к БД
 	conId2 = DllClassCallMethod( hODAC, "oconnecthidden", sXML, sPathSQL );
-	DllClassCallMethod( hODAC, "opostconnect", conId2, "eagle_park", "" );
+	IF conId2 THEN
+		rc = DllClassCallMethod( hODAC, "opostconnect", conId2, "eagle_park", "" );
+	END
 	
-	// 2. проверяем Select
-    stmtId2= DllClassCallMethod( hODAC, "osetstatement", ".//Select[@name=^"TANKINFO^"]", sXML );
-    DllClassCallMethod( hODAC, "osetparameter", stmtId2, ":seqno1", "10" );	
-    DllClassCallMethod( hODAC, "osetparameter", stmtId2, ":seqno2", "20" );	
-    DllClassCallMethod( hODAC, "oaddbindlist", stmtId2, ".//BindList[@name=^"TANKINI^"]", sXML );
-	// 2а. выполним запрос 
-    DllClassCallMethod( hODAC, "oexecute", conId2, stmtId2 );
-	// 2б. выберем записи 
-    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 2, 3 );
-    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 3, 4 );
-	// 2в. очистим кэш
-    DllClassCallMethod( hODAC, "oend", conId2, stmtId2 );
-    
-	// 3. делаем запросы на insert и update по биндлистам
-    DllClassCallMethod( hODAC, "oinsert", conId2, ".//BindList[@name=^"INSERT_SENSOR_READING^"]", sXML, 3 );
-    DllClassCallMethod( hODAC, "oupdate", conId2, ".//BindList[@name=^"UPDTEST^"]", sXML, 4 );
-
+	IF NOT rc THEN
+		// 2. проверяем Select
+	    stmtId2= DllClassCallMethod( hODAC, "osetstatement", ".//Select[@name=^"TANKINFO^"]", sXML );
+	    DllClassCallMethod( hODAC, "osetparameter", stmtId2, ":seqno1", "10" );	
+	    DllClassCallMethod( hODAC, "osetparameter", stmtId2, ":seqno2", "20" );	
+	    DllClassCallMethod( hODAC, "oaddbindlist", stmtId2, ".//BindList[@name=^"TANKINI^"]", sXML );
+		// 2а. выполним запрос 
+	    DllClassCallMethod( hODAC, "oexecute", conId2, stmtId2 );
+		// 2б. выберем записи 
+	    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 2, 3 );
+	    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 3, 4 );
+		// 2в. очистим кэш
+	    DllClassCallMethod( hODAC, "oend", conId2, stmtId2 );
+	    
+		// 3. делаем запросы на insert и update по биндлистам
+	    DllClassCallMethod( hODAC, "oinsert", conId2, ".//BindList[@name=^"INSERT_SENSOR_READING^"]", sXML, 3 );
+	    DllClassCallMethod( hODAC, "oupdate", conId2, ".//BindList[@name=^"UPDTEST^"]", sXML, 4 );
+	END
+	
 	// 4. Отключаемся от БД
-	DllClassCallMethod(hODAC, "odisconnect", conId2);
+	IF conId2 THEN
+		DllClassCallMethod(hODAC, "odisconnect", conId2);
+	END
+	// 5. Уничтожим подключенный объект cioda
+	disposeCIODA();
 END
 
+FUNCTION LogMessage(STRING mess)
+	DllClassCallMethod( hODAC, "log", mess );
+END
+
+FUNCTION LogMessageErr(STRING mess)
+	DllClassCallMethod( hODAC, "logerr", mess );
+END

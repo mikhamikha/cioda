@@ -307,7 +307,7 @@ namespace Citect.Util
 		/// </summary>
 		/// <param name="hCTAPI">The handle to the CTAPI as returned from ctOpen().</param>
 		/// <param name="tag">The tag name to write to.  You may use the array syntax [] to select an element of an array.</param>
-		/// <param name="val">The value to write to the tag as a string.</param>
+        /// <param name="sValue">The value to write to the tag as a string.</param>
 		/// <returns>
 		/// TRUE if successful, otherwise FALSE.  Use GetLastError() to get 
 		/// extended error information. 
