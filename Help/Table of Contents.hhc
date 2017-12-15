@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="ImageType" value="Folder">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Introduction">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="&Acirc;&acirc;&aring;&auml;&aring;&iacute;&egrave;&aring;">
+			<param name="Local" value="Introduction.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&Igrave;&aring;&ograve;&icirc;&auml;&ucirc; &ecirc;&euml;&agrave;&ntilde;&ntilde;&agrave; cioda">
+		<param name="Local" value="ofunctions.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oconnect()">
+			<param name="Local" value="oconnect.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oconnecthidden()">
+			<param name="Local" value="oconnecthidden.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="odisconnect()">
+			<param name="Local" value="odisconnect.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="opostconnect()">
+			<param name="Local" value="opostconnect.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="osavedbuser()">
+			<param name="Local" value="osavedbuser.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="osetstatement()">
+			<param name="Local" value="osetstatement.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oaddbindlist()">
+			<param name="Local" value="oaddbindlist.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="osetparameter()">
+			<param name="Local" value="osetparameter.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oexecute()">
+			<param name="Local" value="oexecute.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="ogetrecordnumber()">
+			<param name="Local" value="ogetrecordnumber.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="ogetrecord()">
+			<param name="Local" value="ogetrecord.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oend()">
+			<param name="Local" value="oend.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oinsert()">
+			<param name="Local" value="oinsert.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="oupdate()">
+			<param name="Local" value="oupdate.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="log()">
+			<param name="Local" value="log.htm">
+			</OBJECT>
+	</UL>
+</UL>
+</BODY></HTML>

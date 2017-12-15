@@ -41,7 +41,7 @@ namespace testapp
             co.oexecute(idcon2, idstmt2);
             co.ogetrecord(idstmt2, 2, 3);
             co.ogetrecord(idstmt2, 5, 4);
-            co.oend(idcon2, idstmt2);
+            co.oend(idstmt2);
 
             co.oinsert(idcon2, ".//BindList[@name=\"INSERT_SENSOR_READING\"]", @"F:\csharp\cioda\logs\appcfg.xml", 3);
             co.oinsert(idcon1, ".//BindList[@name=\"INSERT_SENSOR_READING_OBJ\"]", @"F:\csharp\cioda\logs\appcfg.xml", 112);

@@ -1,0 +1,101 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Установка значения параметра в запросе к БД</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Работа с БД: Установка значения параметра в запросе к БД</strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<table border="0" bgcolor="#eeeeee" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод osetparameter</span></strong></span><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">(int, string, string)</span></strong></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">Подстановка значений параметров в сохраненный в памяти запрос к БД</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Синтаксис</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">osetparameter( stmtId, sName, sValue )</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="width:20%"><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Параметры</span></span></span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em><span style="color:#696969">stmtId</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Целочисленный (32 бита)</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Идентификатор запроса</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><span style="font-size:12px"><em><span style="font-family:verdana,geneva,sans-serif">sName</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Название параметра, например, :param1</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sValue</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Значение подставляемого параметра</span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><br />
+<span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Возвращаемое значение</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Integer</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">0, если успешно, или другое значение</span></span>, <span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">если операцию выполнить не удалось</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">При</span></span></span><span style="font-family:verdana,geneva,sans-serif"><span style="color:#008000"><span style="font-size:14px">мечание</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Метод выполняет подстановку значения параметра в ранее сохраненный запрос к БД.<br />Идентификатор запроса был получен методом <a href="osetstatement.htm">osetstatement()</a>.</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Пример</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример запроса с подставляемыми параметрами:</em><br /><br />
+INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, FILL_UP_LEVEL, DENCITY, TEMPERATURE) <br />VALUES (<strong>:fixId, :storId, :type_meas, :fill_up_level, :density, :temperature</strong>)</span></span></p>
+
+
+<p><span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">Применение см. в <a href="oexecute.htm">oexecute()</a></span></span></p>
+<p>&nbsp;</p>
+</body>
+
+</html>

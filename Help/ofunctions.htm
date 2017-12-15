@@ -1,0 +1,114 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Описание методов cioda</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Описание методов компонента <em>cioda</em></strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Этот раздел содержит описание функций для работы с базой данных Oracle и функций логгирования.<br />
+Следует помнить о том, что все операции SQL выполняются синхронно.<br />
+Управление не возвращается приложению Citect, пока не завершена работа SQL (выполнение опроса, трендов и т. д. приостанавливается).<br />
+Поэтому, данные функции рекомендуется выполнять в отдельном потоке, созданном, например, функцией TaskNew()</span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Все функции SQL, за исключением oconnect(), oconnecthidden(), osetstatement() и ogetrecordnumber(), возвращают код результата операции.<br />
+Если код не равен нулю, это значит, что функция не отработала успешно, и следует перейти к другим операциям.</span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><strong><span style="color:#008000">Общий формат функций SQL:</span></strong><br /><br />
+<span style="color:#0000FF">DllClassCallMethod</span>( hODAC, &quot;<span style="color:#008000">ofunction</span>&quot;, arg1, arg2, ... );</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="padding-bottom: 10px; width:20%"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#008000"><strong>Функция</strong></span></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#008000"><strong>Описание</strong></span></span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px">
+			<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oaddbindlist.htm">oaddbindlist</a></span></span></p>
+			</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">подключает к запросу, созданному <a href="osetstatement.htm">osetstatement()</a>, список связывания</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oconnect.htm">oconnect</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">подключает приложение Citect к базе данных, используя явное задание имени пользователя и его пароля</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oconnecthidden.htm">oconnecthidden</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">подключает приложение Citect к базе данных, используя защищенное задание имени пользователя и его пароля</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="odisconnect.htm">odisconnect</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">отключает приложение Citect от базы данных</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oend.htm">oend</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">освобождает ресурсы, занятые под хранение запроса, параметров и результатов выполнения запроса к БД</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oexecute.htm">oexecute</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">выполняет запрос, подготовленный <a href="osetstatement.htm">osetstatement()</a>, <a href="oaddbindlist.htm">oaddbindlist()</a> и <a href="osetparameter.htm">osetparameter()</a></span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="ogetrecord.htm">ogetrecord</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">выбирает запись по номеру в таблице результатов, созданную функцией <a href="oexecute.htm">oexecute()</a></span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="ogetrecordnumber.htm">ogetrecordnumber</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">выбирает количество строк из таблицы результатов</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oinsert.htm">oinsert</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">вставляет новую запись в таблицу БД, используя значения тэгов в имеющемся BindList. Параметр BindList определяет, какой из тэгов Citect используется и с каким столбцом БД он связан</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="opostconnect.htm">opostconnect</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">выполняет дополнительную авторизацию пользователя</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="osavedbuser.htm">osavedbuser</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">сохраняет в конфигурационном файле имя пользователя и в защищенном виде его пароль</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="osetparameter.htm">osetparameter</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">устанавливает значение именованного параметра для параметризированного запроса</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="osetstatement.htm">osetstatement</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">загружает в буфер из строки или из конфигурационного файла выражение SQL</a></span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 30px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="oupdate.htm">oupdate</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">обновляет данные в таблице БД, используя значения тэгов в имеющемся BindList. Параметр BindList определяет, какой из тэгов Citect используется и с каким столбцом БД он связан</a></span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="log.htm">initlog</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">инициализация системы логгирования</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="log.htm">log</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">создание в лог-файле записи информационнго сообщения</span></span></td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 10px"><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><a href="log.htm">logerr</a></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">создание в лог-файле записи сообщения об ошибке</span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

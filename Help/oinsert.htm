@@ -1,0 +1,132 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Вставка новой записи в таблицу БД</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Работа с БД: Вставка новой записи в таблицу БД</strong></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+<table border="0" cellpadding="1" cellspacing="1" bgcolor="#eeeeee" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод oinsert</span></strong></span><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">(int, string, string, int)</span></strong></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">Вставляет новую запись в таблицу, используя значения тэгов и название таблицы в прилагаемом списке связей (BindList)</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Синтаксис</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">oinsert( connectionId, sXpath, sDoc, suff )</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="width:20%"><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Параметры</span></span></span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em><span style="color:#696969">connectionId</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Целочисленный (32 бита)</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Идентификатор подключения к БД</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><span style="font-size:12px"><em><span style="font-family:verdana,geneva,sans-serif">sXpath</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">XPATH-запрос поиска списка связывания, например, .//BindList[@name=&quot;INSERT_SENSOR_READING&quot;]</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sDoc</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Путь до XML-файла, в котором хранится искомый BindList</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em><span style="color:#696969">suff</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Целочисленный (32 бита)</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Суффикс, добавляемый к имени тэга в BindList</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>	
+	</tbody>
+</table>
+
+<p>
+<span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Возвращаемое значение</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Integer</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">0, если успешно, или другое значение, если операцию выполнить не удалось</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Примечание</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Список связывания (BindList) сопоставляет между собой переменную ввода-вывода Citect и столбец таблицы базы данных.<br />
+Метод позволяет выполнить вставку данных в таблицу БД (название также указано в BindList) непосредственно из переменных Citect.</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Идентификатор подключения был получен методом <a href="oconnecthidden.htm">oconnecthidden()</a>.</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Пример</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример списка связывания (BindList):</em><br /><br />
+&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">BindList </span>name=&quot;INSERT_SENSOR_READING&quot; table=&quot;SENSOR_READING&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;LI71#0&quot; column=&quot;FILL_UP_LEVEL&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;LI72#0&quot; column=&quot;WATER_LEVEL&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;DI71#0&quot; column=&quot;DENCITY&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;TI71#0&quot; column=&quot;TEMPERATURE&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;tankSensorID##&quot; column=&quot;FIXED_SENSOR_ID&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;tankId##&quot; column=&quot;STORAGE_ID&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;operType##&quot; column=&quot;OPER_TYPE&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/<span style="color:#0000FF">BindList</span>&gt;<br />
+<span style="color:#696969"><span style="font-size:11px"><em><br />&nbsp;&nbsp;&nbsp; </em></span></span></span><span style="color:#696969"><span style="font-size:11px"><em><span style="font-family:verdana,geneva,sans-serif">#0 - символы форматирования, позволяющие применять один бинд-лист для разного набора тэгов, например,&nbsp;tankId01, tankId02 и т.д.<br />
+&nbsp;&nbsp;&nbsp; Количество знаков от # до конца строки определяет длину суффикса в имени тэга.
+</span></em></span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример на Cicode:</em></p>
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">DllClassCallMethod</span>( hODAC, &quot;<span style="color:#008000">oinsert</span>&quot;, conId2, &quot;<span style="color:#008000">.//BindList[@name=^&quot;INSERT_SENSOR_READING^&quot;]</span>&quot;, sXML, 3 );</span></span></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

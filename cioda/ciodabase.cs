@@ -90,6 +90,15 @@ namespace ciodans {
             return (this._id.Equals(other._id));
         }
         ~statement () {
+            /*
+            using (var log = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.LiterateConsole()
+                    .WriteTo.RollingFile("C:\\ProgramData\\Schneider Electric\\Citect SCADA 2016\\User\\Example\\log\\{Date}.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                    .CreateLogger()) {
+                log.Information("statement destructor #{stid}", _id);
+            }
+             */ 
             _dt.Clear();
             _dt.Dispose();
             _params.Clear();
@@ -273,7 +282,7 @@ namespace ciodans {
             return rc;
         }  
         /// <summary>
-        /// Сохранение зашифрованного пароля в Xml-файле с проверкой подключения
+        /// Сохранение зашифрованного пароля пользователя в Xml-файле с проверкой подключения
         /// </summary>
         /// <param name="sXML">Имя файла с полным путем</param>
         /// <param name="sxpath">Путь до узла с требуемым атрибутом
@@ -606,6 +615,21 @@ namespace ciodans {
             return rc;
         }
         /// <summary>
+        /// Получение количества выбранных строк 
+        /// </summary>
+        /// <param name="stmtId">Идентиыфикатор запроса</param>
+        /// <returns>Количество выбранных строк</returns>
+        public int ogetrecordnumber( int stmtId ) {
+            int count=0;
+            try {
+                count = m_ost.First(m => m._id == stmtId)._dt.Rows.Count;
+            }
+            catch(Exception e) {
+                logerr("Ошибка выполнения команды getrecordcount() запроса #'{ask}' - {eName}: {e:Desc}", stmtId, e.GetType().Name, e.Message);
+            }
+            return count;
+        }
+        /// <summary>
         /// Получение строки данных из выборки и запись в тэги Citect
         /// </summary>
         /// <param name="stmtId">Идентификатор запроса</param>
@@ -658,21 +682,23 @@ namespace ciodans {
         /// <summary>
         /// Освобождение ресурсов после выборки данных
         /// </summary>
-        /// <param name="connectId">Идентификатор соединения</param>
         /// <param name="stmtId">Идентификатор запроса</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         /// <remarks>Идентификатор connectId был получен oconnect()</remarks>
         /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
-        public int oend(int connectId, int stmtId = 0) {
+        public int oend( int stmtId = 0) {
             int rc = (int)constants.err.e_fault;
             try {
-                m_ost.First(m => m._id == stmtId)._dt.Clear();
-                if (stmtId!=0) rc=oclrstatement(stmtId);
-                rc = (int)constants.err.s_ok;
+                if (stmtId != 0) {
+                    m_ost.First(m => m._id == stmtId)._dt.Clear();
+                    rc = oclrstatement(stmtId);
+                    rc = (int)constants.err.s_ok;
+                    //log("oend({id})", stmtId);
+                }
             }
             catch (Exception e)
             {
-                logerr("Ошибка oend({A},{B}) - {eName}: {e:Desc}", connectId, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка oend({A}) - {eName}: {e:Desc}", stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }

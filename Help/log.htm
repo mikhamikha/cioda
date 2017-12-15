@@ -1,0 +1,125 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Логгирование сообщений</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Работа с лог-файлом: Логгирование сообщений</strong></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+<table border="0" cellpadding="1" cellspacing="1" bgcolor="#eeeeee" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод initlog( string )</span></strong></span></span></td>
+		</tr>
+		<tr bgcolor="#ffffff">
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод log( string )</span></strong></span></span></td>
+		</tr>
+		<tr bgcolor="#ffffff">
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод logerr( string )</span></strong></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">Данные методы инициализируют систему логгирования, записывают информационные и аварийные сообщения соответственно</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Синтаксис</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">initlog( sLogPath )</span></span></p>
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">log( sMess )</span></span></p>
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">logerr( sMess )</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="width:20%"><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Параметры</span></span></span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><span style="font-size:12px"><em><span style="font-family:verdana,geneva,sans-serif">sLogPath</span></em></span></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Путь до папки, куда необходимо записывать лог-файлы</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sMess</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Информационное (для <strong>log</strong>) или аварийное (для <strong>logerr</strong>) сообщение</span></span></td>
+		</tr>
+
+	</tbody>
+</table>
+
+<p>
+<span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Возвращаемое значение</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Integer</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">0, если успешно, или другое значение, если операцию выполнить не удалось</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Примечание</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">
+Для начала работы необходимо инициализировать папку для сохранения логов с помощью метода <strong>initlog</strong>. <br />
+Для сохранения информационного сообщения необходимо использовать метод <strong>log</strong>. При этом будут создаваться строки с префиксом INF<br /> 
+Для сохранения сообщения об ошибке необходимо использовать метод <strong>logerr</strong>. При этом будут создаваться строки с префиксом ERR<br />
+Лог-файлы создаются ежедневно автоматически при записи нового сообщения. <br />
+Название лог-файла имеет формат <strong>yyyyMMdd.log.</strong><br />
+</span></span>
+</p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Пример</span></span></span></p>
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">FUNCTION </span>test()<br /><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">STRING </span>sPathLog = <span style="color:#0000FF">PathToStr</span>(&quot;[<span style="color:#0000FF">RUN</span>]:log&quot;);</span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp; &nbsp;hODAC = <span style="color:#0000FF">DllClassCreate</span>(sPathDll, &quot;cioda&quot;);<br />
+&nbsp;&nbsp; &nbsp;IF <span style="color:#0000FF">DllClassIsValid</span>( hODAC ) THEN<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassCallMethod</span>(hODAC, &quot;initlog&quot;, sPathLog);<br />
+...</span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">LogMessageErr</span>(&quot;Тест лога ошибок&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">LogMessage</span>(&quot;Подключаемся к БД...&quot;);</span></span><br />
+
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">END</span><br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">FUNCTION </span>LogMessage(<span style="color:#0000FF">STRING </span>mess)<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassCallMethod</span>( hODAC, &quot;log&quot;, mess );<br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">FUNCTION </span>LogMessageErr(<span style="color:#0000FF">STRING </span>mess)<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassCallMethod</span>( hODAC, &quot;logerr&quot;, mess );<br />
+<span style="color:#0000FF">END</span></span></span></p>
+<p>&nbsp;</p>
+</body>
+
+</html>

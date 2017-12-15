@@ -1,0 +1,76 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Отключение от БД</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Работа с БД: Отключение пользователя от БД</strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<table border="0" cellpadding="1" cellspacing="1" bgcolor="#eeeeee" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод odisconnect(int)</span></strong></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Метод отключения пользователя от базы данных Oracle</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Синтаксис</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">odisconnect( nNumConnect )</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="width:20%"><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Параметры</span></span></span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">nNumConnect</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: целочисленный, 32 бита</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Номер соединения, полученный <a href="oconnect.htm"><strong>oconnect()</strong></a> или <a href="oconnecthidden.htm"><strong>oconnecthidden()</strong></a></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><br />
+<span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Возвращаемое значение</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Integer</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">0, если успешно, или номер ошибки</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Пример</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">INT </span>conId1;</span></span><br />
+<span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">...</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp; <span style="color:rgb(0, 0, 255)">IF DllClassIsValid</span>( hODAC ) <span style="color:rgb(0, 0, 255)">THEN</span></span></span><br />
+<span style="font-family:verdana,geneva,sans-serif"><span style="font-size:12px">...</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; conId1 = <span style="color:rgb(0, 0, 255)">DllClassCallMethod</span>( hODAC, &quot;odisconnect&quot;, conId1 );</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp;&nbsp; <span style="color:rgb(0, 0, 255)">ENDIF</span></span></span></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

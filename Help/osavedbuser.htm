@@ -1,0 +1,220 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Сохранение зашифрованного пароля пользователя в Xml-файле с проверкой подключения к БД</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="1" cellspacing="1" dir="ltr" style="height:29px; width:100%">
+	<tbody>
+		<tr>
+			<td bgcolor="#111111"><span style="font-size:16px"><font face="Verdana" color="#FFFFFF"><strong>Работа с БД: Сохранение идентификационных данных пользователя в Xml-файле</strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<table border="0" cellpadding="1" cellspacing="1" bgcolor="#eeeeee" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td><span style="color:#008000"><span style="font-size:14px"><strong><span style="font-family:verdana,geneva,sans-serif">Метод osavedbuser(string, string, string, string, string)</span></strong></span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Сохранение идентификационных данных пользователя в Xml-файле с проверкой подключения к БД Oracle </span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Синтаксис</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">osavedbuser( sDoc, sXpath, sDsn, sUser, sPwd )</span></span></p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:100%">
+	<tbody>
+		<tr>
+			<td style="width:20%"><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Параметры</span></span></span></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+		<td>&nbsp;</td><td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sDoc</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Полный путь Xml-файла</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sXpath</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">XPATH-запрос до узла в Xml-файле</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sDsn</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Источник данных</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sUser</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Имя пользователя</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><span style="color:#696969"><em><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">sPwd</span></span></em></span></td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: строковый</span></span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Пароль</span></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p><br />
+<span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Возвращаемое значение</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Тип: Integer</span></span><br />
+<span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">0, если успешно, или другое значение, если операция не удалась</span></span></p>
+
+<p><span style="font-size:14px"><span style="color:rgb(0, 128, 0)"><span style="font-family:verdana,geneva,sans-serif">Примечание</span></span></span><br />
+<p>
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">Метод производит проверку подключения к БД согласно входным аргументам. В случае успешного подключения будет произведена запись в конфигурационный файл имени пользователя (атрибут <strong>user</strong>) в явном, а пароля (атрибут <strong>code</strong>) в зашифрованном виде. <br />Для исключения возможности компрометирования пароля данную операцию рекомендуется проводить однократно в диалоговом режиме.<br />После этого для подключения к БД использовать метод <a href="oconnecthidden.htm">oconnecthidden()</a></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#008000"><span style="font-size:14px">Пример</span></span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">FUNCTION </span>RunDllTest()<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sXML = <span style="color:#0000FF">PathToStr</span>(&quot;[<span style="color:#0000FF">RUN</span>]:dll\appcfg.xml&quot;);<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sPathSQL = &quot;.//SQL&quot;;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT </span>hDoc, hNode;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sUser, sPwd;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sPathDll = <span style="color:#0000FF">PathToStr</span>(&quot;[<span style="color:#0000FF">RUN</span>]:dll\cioda.dll&quot;);<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sDSN;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT </span>fLog;<br />
+&nbsp;&nbsp; &nbsp;<br />
+<span style="color:#696969">// создадим объект cioda для работы с БД и логами</span><br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF initCIODA</span>( sPathDll ) THEN<br />
+<span style="color:#696969">// секция инициализации пользователя</span>&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ErrSet</span>(1);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;hDoc=<span style="color:#0000FF">XMLOpen</span>( sXML );<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF </span>hDoc &lt;&gt; -1 <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;hNode=<span style="color:#0000FF">XMLNodeFind</span>( hDoc, sPathSQL );<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF </span>hNode &lt;&gt; -1 <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;fLog=<span style="color:#0000FF">XMLGetAttribute</span>(hDoc,hNode,&quot;fulllog&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;sDSN=<span style="color:#0000FF">XMLGetAttribute</span>(hDoc,hNode,&quot;dsn&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;sUser=<span style="color:#0000FF">XMLGetAttribute</span>(hDoc,hNode,&quot;user&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;sPwd=<span style="color:#0000FF">XMLGetAttribute</span>(hDoc,hNode,&quot;code&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF StrLength</span>(sUser)=0 <span style="color:#0000FF">OR StrLength</span>(sDSN)=0 <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">Message</span>(<span style="color:#0000FF">StrToLocalText</span>(&quot;@(Fatal Error)&quot;), <span style="color:#0000FF">StrToLocalText</span>(&quot;@(Username or database source not found)&quot;), 48);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ELSE IF StrLength</span>(sPwd)=0 <span style="color:#0000FF">THEN&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;</span><span style="color:#696969">// если пароль не найден, создадим его</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<strong><span style="color:#0000FF">dbUserCreate</span>(sXML, sPathSQL, sDSN, sUser);</strong><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">XMLClose</span>(hDoc);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassSetProperty</span>(hODAC, &quot;fLog&quot;, fLog);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ErrSet</span>(0);<br />
+<span style="color:#696969">// конец секции инициализации пользователя&nbsp;</span>&nbsp; &nbsp;<br />
+&nbsp;&nbsp;&nbsp; <span style="color:#0000FF">ELSE</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">Message</span>(<span style="color:#0000FF">StrToLocalText</span>(&quot;@(Fatal Error)&quot;), <span style="color:#0000FF">StrToLocalText</span>(&quot;@(DLL not found)&quot;)+ &quot; &quot; + sPathDll, 48);<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#696969">// Функция инициализации объекта работы с БД</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">INT</span><br />
+<span style="color:#0000FF">FUNCTION </span>initCIODA(STRING sPathDll)<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT </span>rc=0;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING </span>sPathLog = <span style="color:#0000FF">PathToStr</span>(&quot;[RUN]:log&quot;);</span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif">&nbsp;&nbsp; &nbsp;hODAC = <span style="color:#0000FF">DllClassCreate</span>(sPathDll, &quot;cioda&quot;);<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF DllClassIsValid</span>( hODAC ) <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassCallMethod</span>(hODAC, &quot;initlog&quot;, sPathLog);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;rc=1;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">RETURN </span>rc;<br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#696969">// Функция закрытия объекта работы с БД</span><br />
+<span style="color:#0000FF">FUNCTION </span>disposeCIODA()<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">DllClassDispose</span>(hODAC);&nbsp;&nbsp; &nbsp;<br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#696969">// Функция создания пользователя</span></span></span></p>
+
+<p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><span style="color:#0000FF">INT FUNCTION </span>dbUserCreate(<span style="color:#0000FF">STRING </span>sXML, <span style="color:#0000FF">STRING </span>sPathSQL, <span style="color:#0000FF">STRING </span>dsn, <span style="color:#0000FF">STRING </span>sUser)<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING &nbsp;</span>sPathDll = <span style="color:#0000FF">PathToStr</span>(&quot;[<span style="color:#0000FF">RUN</span>]:dll\cioda.dll&quot;);<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING&nbsp; </span>sName=sUser;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">STRING&nbsp; </span>sPassword;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT&nbsp;&nbsp;&nbsp;&nbsp; </span>bDone;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT&nbsp;&nbsp;&nbsp;&nbsp; </span>nStatus;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT &nbsp;&nbsp; &nbsp;</span>conId;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">INT &nbsp;&nbsp; &nbsp;</span>rc;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF DllClassIsValid</span>( hODAC ) <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;bDone = FALSE;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">WHILE </span>bDone = FALSE <span style="color:#0000FF">DO</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">FormNew</span>(&quot;@(Login Form)&quot;, 35, 5, 5);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">FormInput</span>(1, 0, StrPad(StrToLocalText(&quot;@(Name)&quot;),&quot; &quot;,10), sName, 20);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">FormPassword</span>(1, 2, StrPad(StrToLocalText(&quot;@(Password)&quot;),&quot; &quot;,12), sPassword, 20);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">FormButton</span>( 1, 4, StrPad(&quot;&nbsp;&nbsp;&nbsp; @(OK)&quot;,&quot; &quot;,13), 0, 1);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">FormButton</span>(18, 4, StrPad(&quot;&nbsp; @(Cancel)&quot;,&quot; &quot;,13), 0, 2);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF </span>FormRead(0) = 0 <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<strong>rc = <span style="color:#0000FF">DllClassCallMethod</span>(hODAC, &quot;osavedbuser&quot;, sXML, sPathSQL, dsn, sName, sPassword);</strong><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">IF </span>rc = 0 <span style="color:#0000FF">THEN</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;bDone = <span style="color:#0000FF">TRUE</span>;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nStatus = 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">Message</span>(&quot;@(Info)&quot;, &quot;@(Verification successful)&quot;, 0)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ELSE</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;sPassword = &quot;&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">Message</span>(&quot;@(Info)&quot;, &quot;@(Verification not successful)&quot;, 0)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ELSE</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;bDone = <span style="color:#0000FF">TRUE</span>;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nStatus = 298;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">ELSE</span><br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;bDone = TRUE;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nStatus = 360;<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">END</span><br />
+&nbsp;&nbsp; &nbsp;<span style="color:#0000FF">RETURN </span>nStatus;<br />
+<span style="color:#0000FF">END</span></span></span></p>
+
+<p>&nbsp;</p>
+
+
+</body>
+
+</html>

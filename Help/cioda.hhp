@@ -1,0 +1,30 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=cioda.chm
+Contents file=Table of Contents.hhc
+Default topic=Introduction.htm
+Display compile progress=No
+Language=0x419 Русский (Россия)
+
+
+[FILES]
+Introduction.htm
+oconnect.htm
+oconnecthidden.htm
+log.htm
+oaddbindlist.htm
+odisconnect.htm
+oend.htm
+oexecute.htm
+ofunctions.htm
+ogetrecord.htm
+ogetrecordnumber.htm
+oinsert.htm
+opostconnect.htm
+osavedbuser.htm
+osetparameter.htm
+osetstatement.htm
+oupdate.htm
+
+[INFOTYPES]
+
