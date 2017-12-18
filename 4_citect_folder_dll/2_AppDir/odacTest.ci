@@ -1,5 +1,5 @@
 OBJECT hODAC;
-
+// Функция создания пользователя
 INT FUNCTION dbUserCreate(STRING sXML, STRING sPathSQL, STRING dsn, STRING sUser)
 	STRING 	sPathDll = PathToStr("[RUN]:dll\cioda.dll");
 	STRING  sName=sUser;
@@ -37,7 +37,7 @@ INT FUNCTION dbUserCreate(STRING sXML, STRING sPathSQL, STRING dsn, STRING sUser
 	END
 	RETURN nStatus;
 END
-
+// Функция инициализации объекта работы с БД
 INT
 FUNCTION initCIODA(STRING sPathDll)
 	INT rc=0;
@@ -50,22 +50,19 @@ FUNCTION initCIODA(STRING sPathDll)
 	END
 	RETURN rc;
 END
-
+// Функция закрытия объекта работы с БД
 FUNCTION disposeCIODA()
 	DllClassDispose(hODAC);	
 END
 
 FUNCTION RunDllTest()
-	STRING sPathDll = PathToStr("[RUN]:dll\cioda.dll");
 	STRING sXML = PathToStr("[RUN]:dll\appcfg.xml");
 	STRING sPathSQL = ".//SQL";
-	INT rc;
-	INT conId1, conId2;
-	INT stmtId1, stmtId2;
-	STRING sDSN;
-	INT fLog;
 	INT hDoc, hNode;
 	STRING sUser, sPwd;
+	STRING sPathDll = PathToStr("[RUN]:dll\cioda.dll");
+	STRING sDSN;
+	INT fLog;
 	
 // создадим объект cioda для работы с БД и логами
 	IF initCIODA( sPathDll ) THEN
@@ -118,7 +115,8 @@ FUNCTION task1()
 		// 2а. выполним запрос 
 	    DllClassCallMethod( hODAC, "oexecute", conId1, stmtId1 );
 	    // 2б. очистим кэш	
-	    DllClassCallMethod( hODAC, "oclrstatement", stmtId1 );
+//	    DllClassCallMethod( hODAC, "oclrstatement", stmtId1 );
+	    DllClassCallMethod( hODAC, "oend", stmtId1 );
 	    
 		// 3. делаем запросы на insert и update по биндлистам
 	    DllClassCallMethod( hODAC, "oinsert", conId1, ".//BindList[@name=^"INSERT_SENSOR_READING_OBJ^"]", sXML, 112 );
@@ -137,6 +135,7 @@ FUNCTION task2()
 	INT stmtId2;
 	STRING sXML = PathToStr("[RUN]:dll\appcfg.xml");
 	STRING sPathSQL = ".//SQL";
+	INT recordsCount;
 	
 	LogMessageErr("Тест лога ошибок");
 	LogMessage("Подключаемся к БД из потока 2");
@@ -155,11 +154,13 @@ FUNCTION task2()
 	    DllClassCallMethod( hODAC, "oaddbindlist", stmtId2, ".//BindList[@name=^"TANKINI^"]", sXML );
 		// 2а. выполним запрос 
 	    DllClassCallMethod( hODAC, "oexecute", conId2, stmtId2 );
+	    recordsCount = DllClassCallMethod( hODAC, "ogetrecordnumber", stmtId2 );
+	    LogMessage( "Получено записей: " + recordsCount:# );
 		// 2б. выберем записи 
 	    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 2, 3 );
 	    DllClassCallMethod( hODAC, "ogetrecord", stmtId2, 3, 4 );
 		// 2в. очистим кэш
-	    DllClassCallMethod( hODAC, "oend", conId2, stmtId2 );
+	    DllClassCallMethod( hODAC, "oend", stmtId2 );
 	    
 		// 3. делаем запросы на insert и update по биндлистам
 	    DllClassCallMethod( hODAC, "oinsert", conId2, ".//BindList[@name=^"INSERT_SENSOR_READING^"]", sXML, 3 );

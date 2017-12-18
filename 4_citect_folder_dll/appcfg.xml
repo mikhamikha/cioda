@@ -66,7 +66,7 @@
     </TERMs>
     <Parameters name="fillsetup" addon="0" dozeoff="1" block_DensEvaluate="0" dozeMin="20" />
   </Structure>
-  <SQL name="sqlconfig" simulation="0" dsn="orcl" user="fox" fulllog="1">
+  <SQL name="sqlconfig" simulation="0" dsn="orcl" user="fox" fulllog="1" code="zBmblfkRGZtoIHqMVXdBjQ==">
     <Select name="TANKINFO" ask="SELECT s.num_stor, s.id, s.BASE_HEIGHT, s.DEAD_REST, pck_goods.get_gds_short(pck_inv.NMCL_STORAGE_DEFAULT_ID(s.id))as name, fs.id as SENSOR_ID FROM storage s, fixed_sensor fs WHERE pck_inv.FNC_STORAGE_STATUS(s.id) = 1 AND s.id = fs.storage_id and sysdate &amp;gt= fs.begin_date and sysdate &amp;lt fs.sp_end_date AND fs.asu_number &amp;gt ':seqno1' and fs.asu_number &amp;lt ':seqno2'" />
     <Select name="test insert1" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000131, 511000000000262, 7, 111.1, :density, 11.1, ':density')" />
     <Select name="test insert2" ask="INSERT INTO sensor_reading (FIXED_SENSOR_ID, STORAGE_ID, OPER_TYPE, BEGIN_DATE, FILL_UP_LEVEL, DENCITY, TEMPERATURE, NOTE) VALUES (989000000000140, 511000000000270, 7, TO_DATE(':datetime', 'YYYY-MM-DD HH24:MI:SS'), 222.2, :density, 12.2, ':datetime')" />
