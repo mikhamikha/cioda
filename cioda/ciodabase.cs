@@ -67,6 +67,7 @@ namespace ciodans {
     public class statement : IEquatable<statement> {
         public int _id { get; set; }
         public string _request { get; set; }
+        public bool _log { get; set; }
         public PairList<string, string> _params = new PairList<string, string>();
         public PairList<string, string> _binds = new PairList<string, string>();
         public DataTable _dt = new DataTable();
@@ -81,9 +82,10 @@ namespace ciodans {
         public void SetParam(string key, string value) {
             _params.First(m => m._tkey == key)._tvalue = value;
         }
-        public statement(int id, string request) {
+        public statement(int id, string request, bool log=false) {
             _id = id;
             _request = request;
+            _log = log;
         }
         public bool Equals(statement other) {
             if (other == null) return false;
@@ -122,6 +124,8 @@ namespace ciodans {
         private static int m_stmt_id = 0;
         private string m_path;
 
+        public ciodabase() {
+        }
         /// <summary>
         /// Инициализация системы логгирования
         /// </summary>
@@ -199,8 +203,9 @@ namespace ciodans {
         /// </param>
         /// <param name="xnameattr">Название считываемого атрибута</param>
         /// <param name="attrvalue">Считанное значение атрибута</param>
+        /// <param name="bLog">Требуется ли логгирование</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
-        public int cfgReadAttr(string xdoc, string xpath, string xnameattr, ref string attrvalue) {
+        public int cfgReadAttr(string xdoc, string xpath, string xnameattr, ref string attrvalue, bool bLog=true) {
             int rc = (int)constants.err.e_cfgread;
             try {
                 if (xdoc != "") {
@@ -212,10 +217,10 @@ namespace ciodans {
                 }
             }
             catch (XmlException e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
+                if (bLog) log("Ошибка чтения атрибута {Attr} запроса {Ask} из файла {F} - {eName}: {e:Desc}", xnameattr, xpath, xdoc, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                log("Ошибка чтения запроса {A} из файла {F} - {eName}: {e:Desc}", xpath, xdoc, e.GetType().Name, e.Message);
+                if (bLog) log("Ошибка чтения атрибута {Attr} запроса {Ask} из файла {F} - {eName}: {e:Desc}", xnameattr, xpath, xdoc, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -274,7 +279,7 @@ namespace ciodans {
                 oc.Close();
                 oc.Dispose();
                 rc = (int)constants.err.s_ok;
-                if (fLog != 0) log("Подключение {UID}@{DSN} проверено", uid, dsn);
+                if ((fLog & 1) != 0) log("Подключение {UID}@{DSN} проверено", uid, dsn);
              }
             catch (OracleException e) {
                 logerr("Ошибка проверки подключения {UID}@{DSN} - {eName}: {e:Desc}", uid, dsn, e.GetType().Name, e.Message);
@@ -323,7 +328,7 @@ namespace ciodans {
                 else m_con_id = m_con_list.Last()._tkey + 1;
                 m_con_list.Add( m_con_id, oc );
                 rc = (int)constants.err.s_ok;
-                log("Подключение #{CONID} {UID}@{DSN} установлено", m_con_id, uid, dsn);
+                if ((fLog & 1) != 0) log("Подключение #{CONID} {UID}@{DSN} установлено", m_con_id, uid, dsn);
                 connectId = m_con_id;
             }
 			catch(OracleException e) {
@@ -394,7 +399,7 @@ namespace ciodans {
                     oexecute(connectId, "BEGIN PCK_ADM.PRC_REGISTRATION_DEL; END;", "" ); 
                     oc.Close();
                     oc.Dispose();
-                    log("Подключение #{CONID} закрыто", connectId);
+                    if ((fLog & 1) != 0) log("Подключение #{CONID} закрыто", connectId);
                     m_con_list.RemoveAt(_index);
                 }
             }
@@ -426,7 +431,12 @@ namespace ciodans {
                     sask = sask.Replace("&amp;gt", ">");
                     sask = sask.Replace("&lt", "<");
                     sask = sask.Replace("&amp;lt", "<");
-                    m_ost.Add(new statement(m_stmt_id, sask));
+                    string slog = "   ";
+                    bool blog;
+                    rc = cfgReadAttr(sXml, sRequest, "log", ref slog, false);
+                    blog = ((rc == (int)constants.err.s_ok) && (slog.Trim() == "1"));
+//                  log("setstatement {sreq} slog={slog} log={log} rc={rc}", sRequest, slog.Trim(), blog, rc);
+                    m_ost.Add(new statement(m_stmt_id, sask, blog));
                     stmtId = m_stmt_id;
                     rc = (int)constants.err.s_ok;
                 }
@@ -440,25 +450,29 @@ namespace ciodans {
         /// Установка значений параметров в сохраненный в списке запрос
         /// </summary>
         /// <param name="stmtId">Идентификатор запроса</param>
-        /// <param name="name">Название параметра</param>
-        /// <param name="value">Значение параметра</param>
+        /// <param name="sname">Название параметра</param>
+        /// <param name="svalue">Значение параметра</param>
         /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
         /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
-        public int osetparameter(int stmtId, string name, string value) {
+        public int osetparameter(int stmtId, string sname, string svalue) {
             int rc = (int)constants.err.e_fault;
             try {
-                statement items = m_ost.First(m => m._id == stmtId);
-                string sval = value.Replace(",", ".");
-                if (items._params.FindAll(n => n._tkey == name).Count == 0)
-                    m_ost.First(m => m._id == stmtId)._params.Add(new Pair<string, string>(name.Trim(), sval));
-                else m_ost.First(m => m._id == stmtId)._params.Find(n => n._tkey == name)._tvalue = sval;
+                statement item = m_ost.First(m => m._id == stmtId);
+                var val = svalue;
+//                val = val.Replace(',', '.');                                // меняем в параметрах ',' на '.'
+                val = val.Replace(';', ',');                                // меняем в параметрах ';' на ','
+                string name = sname.Trim();
+                if (item._params.FindAll(n => n._tkey == name).Count == 0)
+                    item._params.Add(new Pair<string, string>(name, val));
+                else item._params.Find(n => n._tkey == name)._tvalue = val;
                 rc = (int)constants.err.s_ok;
+                //log("setparameter {Name} = {Value1} -> {Value2}", sname, svalue, val);
             }
             catch (InvalidOperationException e) {
-                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", value, name, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", svalue, sname, stmtId, e.GetType().Name, e.Message);
             }
             catch (Exception e) {
-                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", value, name, stmtId, e.GetType().Name, e.Message);
+                logerr("Ошибка записи значения {B} в параметр {A} запроса {F} - {eName}: {e:Desc}", svalue, sname, stmtId, e.GetType().Name, e.Message);
             }
             return rc;
         }
@@ -600,9 +614,9 @@ namespace ciodans {
                         _dr.Dispose();
                     }
                     _ocm.Dispose();
-                    string scont = "set role workspace";
-                    if (sask.ToLower().Contains(scont)) sask = "Role set.";
-                    if (fLog!=0) log("{A}", sask);
+//                    string scont = "set role workspace";
+                    if (sask.ToLower().Contains("set role workspace") || sask.ToLower().Contains("prc_connect")) sask = "";
+                    if ((fLog & 1) != 0 && sask!="") log("{A}", sask);
                     rc = (int)constants.err.s_ok;
                 }
             }
@@ -654,16 +668,19 @@ namespace ciodans {
                         _vars.AppendFormat(_sfmt, _var);
                         _cols.AppendFormat(_sfmt, (string)col._tvalue);
                         string _val = _st._dt.Rows[recOff][col._tvalue].ToString();
+//                        _val = _val.Replace(',', '.');
                         _fCi |= CTAPI.ctTagWrite(cihndl, _var, _val);
                         _out.AppendFormat(_sfmt, _val);
                     }
-                    log("{variables}", _vars);
-                    log("{columns}", _cols);
-                    log("{values}", _out);
+                    if ((fLog & 1) != 0 || _st._log) {
+                        log("{variables}", _vars);
+                        log("{columns}", _cols);
+                        log("{values}", _out);
+                    }
                     string mess = string.Format("Citect variables writed {0}", (_fCi ? "successfully" : "unsuccessfully"));
                     if (!_fCi)
                         logerr(mess);
-                    else if( fLog!=0 ) log(mess);
+                    //else if ((fLog & 1) != 0) log(mess);
                     rc = (_fCi) ? (int)constants.err.s_ok : (int)constants.err.e_noitems;
                 }
             }
@@ -680,6 +697,74 @@ namespace ciodans {
             return rc;
         }
         /// <summary>
+        /// Получение набора строк данных из выборки и запись в тэги Citect
+        /// </summary>
+        /// <param name="stmtId">Идентификатор запроса</param>
+        /// <param name="recOff">Номер первой выбираемой записи</param>
+        /// <param name="recOffLast">Номер последней выбираемой записи</param>
+        /// <returns>Код возврата (=0 - good, другие - неудача)</returns>
+        /// <remarks>Идентификатор stmtId был получен osetstatement()</remarks>
+        public int ogetrecordset( int stmtId, int recOff = 1, int recOffLast = 0 )
+        {
+            int rc = (int)constants.err.e_fault;
+            uint cihndl = 0;
+//            CTOVERLAPPED lpOv = new CTOVERLAPPED();
+
+            try
+            {
+                var _st = m_ost.First(m => m._id == stmtId);
+                if (_st._dt.Rows.Count != 0)
+                {
+                    bool _fCi = false;
+                    cihndl = CTAPI.ctOpen("", "", "", CTAPI.CT_OPEN_BATCH);
+                    StringBuilder _vars = new StringBuilder();
+                    StringBuilder _cols = new StringBuilder();
+                    StringBuilder _out = new StringBuilder();
+//                    StringBuilder _wr = new StringBuilder();
+//                    StringBuilder _res = new StringBuilder();
+                    string _sfmt = "|{0,-15}";
+                    for (int nrow = recOff; nrow > 0 && nrow <= recOffLast; nrow++) {
+                        _vars.Clear();
+                        _cols.Clear();
+                        _out.Clear();
+                        foreach (var col in _st._binds) {
+                            string _var = _addSuffix((string)col._tkey, nrow);
+                            _vars.AppendFormat(_sfmt, _var);
+                            _cols.AppendFormat(_sfmt, (string)col._tvalue);
+                            string _val = _st._dt.Rows[nrow-1][col._tvalue].ToString();
+//                            _wr.Clear();
+//                            _wr.AppendFormat("TagWrite(\"{0}\", \"{1}\"", _var, _val);
+//                            CTAPI.ctCicode(cihndl, _wr.ToString(), 0, 0, _res, 0, IntPtr.Zero);
+                            _fCi |= CTAPI.ctTagWrite(cihndl, _var, _val);
+                            _out.AppendFormat(_sfmt, _val);
+                        }
+                        if (nrow == recOff) 
+                            log("{columns}", _cols.ToString() );
+                        log("{variables}", _vars.ToString() );
+                        log("{values}", _out.ToString() );
+                    }
+                    string mess = string.Format("Citect variables writed {0}", (_fCi ? "successfully" : "unsuccessfully"));
+                    if (!_fCi)
+                        logerr(mess);
+                    else if ((fLog & 1) != 0) log(mess);
+                    rc = (_fCi) ? (int)constants.err.s_ok : (int)constants.err.e_noitems;
+                }
+            }
+            catch (OracleException e)
+            {
+                logerr("Ошибка выборки записи '{A}' запроса {B} - {eName}: {e:Desc}", recOff, stmtId, e.GetType().Name, e.Message);
+            }
+            catch (Exception e)
+            {
+                logerr("Ошибка выборки записи '{A}' запроса {B} - {eName}: {e:Desc}", recOff, stmtId, e.GetType().Name, e.Message);
+            }
+            finally
+            {
+                CTAPI.ctClose(cihndl);
+            }
+
+            return rc;
+        }        /// <summary>
         /// Освобождение ресурсов после выборки данных
         /// </summary>
         /// <param name="stmtId">Идентификатор запроса</param>
@@ -724,26 +809,29 @@ namespace ciodans {
                     string _ask = "INSERT INTO {0} ({1}) VALUES ({2})";
                     StringBuilder _cols = new StringBuilder();
                     StringBuilder _vals = new StringBuilder();
+
                     var x = new XmlDocument();
                     x.Load(xdoc);
                     var xn = x.SelectSingleNode(xpathbind);
 
                     if (_table.Length == 0) _table = xn.Attributes.GetNamedItem("table").Value;
-
+                    
                     foreach (XmlNode it in xn.ChildNodes) {
-                        string _var = _addSuffix(it.Attributes.Item(0).Value.Trim(), suff);
+                        string _var = it.Attributes.Item(0).Value.Trim();
+                        string _apo = _removeApo(ref _var);
+                        _var = _addSuffix(_var, suff);
                         string _col = it.Attributes.Item(1).Value.Trim();
                         StringBuilder pval = new StringBuilder(256);
                         _fCi |= CTAPI.ctTagRead(cihndl, _var, pval, 128);
                         _cols.AppendFormat("{0}, ", _col);
-                        _vals.AppendFormat("{0}, ", pval.ToString());
+                        _vals.AppendFormat("{0}{1}{0}, ", _apo, pval.ToString());
                     }
                     _vals = _vals.Remove(_vals.ToString().LastIndexOf(','), _vals.Length - _vals.ToString().LastIndexOf(','));
                     _cols = _cols.Remove(_cols.ToString().LastIndexOf(','), _cols.Length - _cols.ToString().LastIndexOf(','));
                     string mess = string.Format("Citect variables readed {0}", (_fCi ? "successfully" : "unsuccessfully"));
                     if (!_fCi)
                         logerr(mess);
-                    else if (fLog != 0) log(mess); 
+                    //else if ((fLog & 1) != 0) log(mess); 
                     
                     _ask = String.Format(_ask, _table, _cols.ToString(), _vals.ToString());
                     rc = oexecute(connectId, _ask, "");
@@ -780,19 +868,23 @@ namespace ciodans {
                     string _ask = "UPDATE {0} set {1} WHERE {2}";
                     StringBuilder _vals = new StringBuilder();
                     StringBuilder _where = new StringBuilder();
+
                     var x = new XmlDocument();
                     x.Load(xdoc);
                     var xn = x.SelectSingleNode(xpathbind);
 
                     if(_table.Length==0) _table = xn.Attributes.GetNamedItem("table").Value;
+
                     cihndl = CTAPI.ctOpen("", "", "", CTAPI.CT_OPEN_BATCH);
                     foreach (XmlNode it in xn.ChildNodes) {
-                        string _var = _addSuffix(it.Attributes.Item(0).Value.Trim(), suff);
+                        string _var = it.Attributes.Item(0).Value.Trim();
+                        string _apo = _removeApo(ref _var);
+                        _var = _addSuffix(_var, suff);
                         string _col = it.Attributes.Item(1).Value.Trim();
                         StringBuilder pval = new StringBuilder(256);
                         _fCi |= CTAPI.ctTagRead(cihndl, _var, pval, 128);
                         if (it.Name.ToLower().Trim() == "item") {
-                            _vals.AppendFormat("{0} = {1}, ", _col, pval.ToString());
+                            _vals.AppendFormat("{0} = {1}{2}{1}, ", _col, _apo, pval.ToString());
                         }
                         else if (it.Name.ToLower().Trim() == "where") {
                             _where.Remove(0, _where.Length); _where.AppendFormat( "{0} = {1}", _col, pval.ToString() );
@@ -802,7 +894,7 @@ namespace ciodans {
                     string mess = string.Format("Citect variables readed {0}", (_fCi ? "successfully" : "unsuccessfully"));
                     if (!_fCi)
                         logerr(mess);
-                    else if (fLog != 0) log(mess); 
+                    //else if ((fLog & 1) != 0) log(mess); 
                     _ask = String.Format(_ask, _table, _vals.ToString(), _where.ToString());
                     rc = oexecute(connectId, _ask, "");
                 }
@@ -836,5 +928,18 @@ namespace ciodans {
             }
             return _var;
         }
+        private string _removeApo(ref string str)
+        {
+            string _var = str;
+            char[] charsToTrim = { '\'' };
+            _var = _var.Trim(charsToTrim);
+
+            string _res = (str.Length > _var.Length)?"\'":"";
+            
+            str = _var;
+
+            return _res;
+        }
+
     }
 }

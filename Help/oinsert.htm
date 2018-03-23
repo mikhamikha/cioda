@@ -115,11 +115,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;DI71#0&quot; column=&quot;DENCITY&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;TI71#0&quot; column=&quot;TEMPERATURE&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;tankSensorID##&quot; column=&quot;FIXED_SENSOR_ID&quot; /&gt;<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;tankId##&quot; column=&quot;STORAGE_ID&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;<span style="color:#808080">'tankId##'<span style="color:#000000">&quot; column=&quot;STORAGE_ID&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;operType##&quot; column=&quot;OPER_TYPE&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp; &lt;/<span style="color:#0000FF">BindList</span>&gt;<br />
 <span style="color:#696969"><span style="font-size:11px"><em><br />&nbsp;&nbsp;&nbsp; </em></span></span></span><span style="color:#696969"><span style="font-size:11px"><em><span style="font-family:verdana,geneva,sans-serif">#0 - символы форматирования, позволяющие применять один бинд-лист для разного набора тэгов, например,&nbsp;tankId01, tankId02 и т.д.<br />
-&nbsp;&nbsp;&nbsp; Количество знаков от # до конца строки определяет длину суффикса в имени тэга.
+&nbsp;&nbsp;&nbsp; Количество знаков от # до конца строки определяет длину суффикса в имени тэга.<br />
+&nbsp;&nbsp;&nbsp; Атрибут name в апострофах ( name="'tankId##'" ) означает, что значение в выражении тоже будет в апострофах.
 </span></em></span></span></span></p>
 
 <p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример на Cicode:</em></p>

@@ -14,11 +14,14 @@ using System.Runtime.InteropServices;
 using Citect.Util;
 
 namespace ciodans {
+
     /// <summary>
     /// Это класс-обертка для ciodabase
     /// Описание функций смотри в базовом классе
     /// </summary>
     public class cioda : ciodabase {
+        public cioda() : base() {
+        }
         /// <summary>
         /// Открытое подключение к БД
         /// </summary>

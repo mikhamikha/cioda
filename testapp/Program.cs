@@ -8,7 +8,8 @@ namespace testapp
 {
     class Program {
         static void Main(string[] args) {
-            int idcon1=0, idcon2=0, idstmt1=0, idstmt2=0;
+            int idcon1 = 0, idstmt1 = 0;
+//            int idcon2 = 0, idstmt2 = 0;
             string _now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var rnd = new Random();
             double _dens = 0.72 + rnd.NextDouble()/11.0;
@@ -17,23 +18,24 @@ namespace testapp
 //            co.initlog(@"D:\Work\projects\csharp\cioda\logs");
 
             co.oconnect("orcl", "fox", "redfox", ref idcon1);
-            co.oconnect("orcl", "fox", "redfox", ref idcon2);
+//            co.oconnect("orcl", "fox", "redfox", ref idcon2);
+            co.opostconnect(idcon1, "eagle_park", "");
 
             co.osetstatement(".//Select[@name=\"test insert1\"]", ref idstmt1, @"F:\csharp\cioda\logs\appcfg.xml");
             co.osetparameter(idstmt1, ":density", _dens.ToString());
 
 
-            co.osetstatement( ".//Select[@name=\"test insert2\"]", ref idstmt2, @"F:\csharp\cioda\logs\appcfg.xml" );
-            co.osetparameter(idstmt2, ":datetime", _now);
-            _dens = 0.72 + rnd.NextDouble() / 11.0;
-            co.osetparameter(idstmt2, ":density", _dens.ToString());
+  //          co.osetstatement( ".//Select[@name=\"test insert2\"]", ref idstmt2, @"F:\csharp\cioda\logs\appcfg.xml" );
+  //          co.osetparameter(idstmt2, ":datetime", _now);
+  //          _dens = 0.72 + rnd.NextDouble() / 11.0;
+  //          co.osetparameter(idstmt2, ":density", _dens.ToString());
             
-            co.oexecute(idcon2,idstmt2);
-            co.oclrstatement(idstmt2);
+//            co.oexecute(idcon2,idstmt2);
+//            co.oclrstatement(idstmt2);
 
             co.oexecute(idcon1, idstmt1);
             co.oclrstatement(idstmt1);
-
+/*
             co.osetstatement( ".//Select[@name=\"TANKINFO\"]", ref idstmt2, @"F:\csharp\cioda\logs\appcfg.xml" );
             co.osetparameter(idstmt2, ":seqno1", "10");
             co.osetparameter(idstmt2, ":seqno2", "20");
@@ -49,6 +51,7 @@ namespace testapp
             co.oupdate(idcon2, ".//BindList[@name=\"UPDTEST\"]", @"F:\csharp\cioda\logs\appcfg.xml", 4);
 
             co.odisconnect(idcon2);
+ */
             co.odisconnect(idcon1);
             
             Console.Write("Press any key");

@@ -8,7 +8,16 @@ using System.Runtime.InteropServices;
 
 namespace Citect.Util
 {
-	/// <summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CTOVERLAPPED
+    {
+        UInt32  dwStatus;    /* completion status        */
+        UInt32  dwLength;    /* length of result buffer  */
+        char    pData;       /* result buffer        */
+        UInt32  OffsetHigh;  /* not used (as per Win32)  */
+        IntPtr  hEvent;      /* event handle to signal   */
+    }
+    /// <summary>
 	///		C# interface to CTAPI.
 	/// </summary>
 	public class CTAPI
@@ -317,6 +326,34 @@ namespace Citect.Util
 			uint hCTAPI,
 			[MarshalAs(UnmanagedType.LPStr)] string tag,
 			[MarshalAs(UnmanagedType.LPStr)] string sValue);
+
+        /// <summary>
+        /// Writes to the given CitectHMI/SCADA I/O Device variable tag. 
+        /// The value is converted into the correct data type, then scaled 
+        /// and then written to the tag. If writing to an array element only 
+        /// a single element of the array is written to.  This function will 
+        /// generate a write request to the I/O Server.  The time taken to 
+        /// complete this function will be dependent on the performance of 
+        /// the I/O Device.  
+        /// </summary>
+        /// <param name="hCTAPI">The handle to the CTAPI as returned from ctOpen().</param>
+        /// <param name="tag">The tag name to write to.  You may use the array syntax [] to select an element of an array.</param>
+        /// <param name="sValue">The value to write to the tag as a string.</param>
+        /// <param name="o">
+        /// CTOVERLAPPED structure.  
+        /// This structure is used to control the overlapped notification.  
+        /// Set to NULL if you want a synchronous function call. 
+        /// </param>
+        /// <returns>
+        /// TRUE if successful, otherwise FALSE.  Use GetLastError() to get 
+        /// extended error information. 
+        /// </returns>
+        [DllImport("ctapi.dll", SetLastError = true)]
+        public static extern bool ctTagWriteEx(
+            uint hCTAPI,
+            [MarshalAs(UnmanagedType.LPStr)] string tag,
+            [MarshalAs(UnmanagedType.LPStr)] string sValue,
+            [MarshalAs(UnmanagedType.AsAny)] Object o);
 
 		/// <summary>
 		/// This function will read the single tag value.  

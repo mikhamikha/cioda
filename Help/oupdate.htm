@@ -110,12 +110,13 @@
 
 <p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример списка связывания (BindList):</em><br /><br />
 &nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">BindList </span>name=&quot;UPDTEST&quot; table=&quot;OUT_WBILL_RAW&quot;&gt;<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>where=&quot;lineid#0&quot; column=&quot;LINE_ID&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>where=&quot;<span style="color:#808080">'lineid#0'<span style="color:#000000">&quot; column=&quot;LINE_ID&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;LI71#0&quot; column=&quot;IN_VOLUME&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<span style="color:#0000FF">item </span>name=&quot;TI71#0&quot; column=&quot;IN_WEIGHT&quot; /&gt;<br />
 &nbsp;&nbsp;&nbsp; &lt;/<span style="color:#0000FF">BindList</span>&gt;<br />
 <span style="color:#696969"><span style="font-size:11px"><em><br />&nbsp;&nbsp;&nbsp; </em></span></span></span><span style="color:#696969"><span style="font-size:11px"><em><span style="font-family:verdana,geneva,sans-serif">#0 - символы форматирования, позволяющие применять один бинд-лист для разного набора тэгов, например,&nbsp;LI7101, LI7102 и т.д.<br />
-&nbsp;&nbsp;&nbsp; Количество знаков от # до конца строки определяет длину суффикса в имени тэга.
+&nbsp;&nbsp;&nbsp; Количество знаков от # до конца строки определяет длину суффикса в имени тэга.<br />
+&nbsp;&nbsp;&nbsp; Атрибут name в апострофах ( name="'lineid#0'" ) означает, что значение в выражении тоже будет в апострофах.
 </span></em></span></span></span></p>
 
 <p><span style="font-size:12px"><span style="font-family:verdana,geneva,sans-serif"><em>Пример на Cicode:</em></p>
